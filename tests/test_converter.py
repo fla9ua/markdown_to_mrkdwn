@@ -1,53 +1,44 @@
 import unittest
-from markdown_to_mrkdwn import SlackMarkdownConverter
+from markdown_to_mrkdwn.converter import SlackMarkdownConverter
 
 class TestSlackMarkdownConverter(unittest.TestCase):
     def setUp(self):
         self.converter = SlackMarkdownConverter()
 
-    def test_bold_conversion(self):
-        """Test conversion of bold text using ** and __"""
-        test_cases = [
-            ('**bold text**', '*bold text*'),
-            ('__bold text__', '*bold text*')
-        ]
-        for markdown, expected in test_cases:
-            with self.subTest(markdown=markdown):
-                result = self.converter.convert(markdown)
-                self.assertEqual(result, expected)
+    def test_convert_headers(self):
+        self.assertEqual(self.converter.convert("# Header 1"), "*Header 1*")
+        self.assertEqual(self.converter.convert("## Header 2"), "*Header 2*")
+        self.assertEqual(self.converter.convert("### Header 3"), "*Header 3*")
 
-    def test_italic_conversion(self):
-        """Test conversion of italic text"""
-        test_cases = [
-            ('*italic text*', '_italic text_')
-        ]
-        for markdown, expected in test_cases:
-            with self.subTest(markdown=markdown):
-                result = self.converter.convert(markdown)
-                self.assertEqual(result, expected)
+    def test_convert_bold(self):
+        self.assertEqual(self.converter.convert("**bold text**"), "*bold text*")
+        self.assertEqual(self.converter.convert("__bold text__"), "*bold text*")
 
-    def test_link_conversion(self):
-        """Test conversion of markdown links"""
-        test_cases = [
-            ('[Anthropic](https://www.anthropic.com)', '<https://www.anthropic.com|Anthropic>')
-        ]
-        for markdown, expected in test_cases:
-            with self.subTest(markdown=markdown):
-                result = self.converter.convert(markdown)
-                self.assertEqual(result, expected)
+    def test_convert_italic(self):
+        self.assertEqual(self.converter.convert("*italic text*"), "_italic text_")
 
-    def test_list_conversion(self):
-        """Test conversion of unordered lists"""
-        test_cases = [
-            ('- Item 1\n- Item 2', '• Item 1\n• Item 2')
-        ]
-        for markdown, expected in test_cases:
-            with self.subTest(markdown=markdown):
-                result = self.converter.convert(markdown)
-                self.assertEqual(result, expected)
+    def test_convert_links(self):
+        self.assertEqual(self.converter.convert("[link](http://example.com)"), "<http://example.com|link>")
 
-    def test_multiline_conversion(self):
-        """Test conversion of multiple Markdown elements in a single document"""
+    def test_convert_inline_code(self):
+        self.assertEqual(self.converter.convert("`code`"), "`code`")
+
+    def test_convert_unordered_list(self):
+        self.assertEqual(self.converter.convert("- item"), "• item")
+
+    def test_convert_blockquote(self):
+        self.assertEqual(self.converter.convert("> quote"), "> quote")
+
+    def test_convert_images(self):
+        self.assertEqual(self.converter.convert("![alt text](http://example.com/image.png)"), "<http://example.com/image.png>")
+
+    def test_convert_horizontal_rule(self):
+        self.assertEqual(self.converter.convert("---"), "──────────")
+
+    def test_empty_string(self):
+        self.assertEqual(self.converter.convert(""), "")
+
+    def test_mixed_elements(self):
         markdown = """# Title
 **Bold text**
 - List item
@@ -56,10 +47,37 @@ class TestSlackMarkdownConverter(unittest.TestCase):
         expected = """*Title*
 *Bold text*
 • List item
-<https://example.com|Link>
-"""
-        result = self.converter.convert(markdown)
-        self.assertEqual(result, expected)
+<https://example.com|Link>"""
+        self.assertEqual(self.converter.convert(markdown), expected)
 
-if __name__ == '__main__':
+    def test_nested_list(self):
+        markdown = """- Item 1
+  - Subitem 1
+  - Subitem 2
+- Item 2"""
+        expected = """• Item 1
+  • Subitem 1
+  • Subitem 2
+• Item 2"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_multiline_blockquote(self):
+        markdown = """> This is a quote
+> that spans multiple lines."""
+        expected = """> This is a quote
+> that spans multiple lines."""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_code_block(self):
+        markdown = """```
+def hello_world():
+    print("Hello, world!")
+```"""
+        expected = """```
+def hello_world():
+    print("Hello, world!")
+```"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+if __name__ == "__main__":
     unittest.main()
