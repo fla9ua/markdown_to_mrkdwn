@@ -1,84 +1,43 @@
 # markdown_to_mrkdwn
 
-## Overview
-
-`markdown_to_mrkdwn` is a Python library that converts standard Markdown to Slack's mrkdwn (Markdown-like) format, ensuring compatibility with Slack's specific formatting requirements.
-
-## Installation
-
-```bash
-pip install markdown-to-mrkdwn
-```
-
-## Requirements
-
-- Python 3.7+
-- markdown2 library
-
-## Quick Start
-
-```python
-from markdown_to_mrkdwn import SlackMarkdownConverter
-
-markdown_text = """
-# Hello World
-
-This is a **bold** text with _italic_ style.
-"""
-
-slack_markdown = SlackMarkdownConverter.convert(markdown_text)
-print(slack_markdown)
-```
+A library to convert Markdown to Slack's mrkdwn format.
 
 ## Features
 
-- Convert standard Markdown to Slack-compatible format
-- Support for headers, bold, italic, code blocks, and lists
-- Simple and intuitive API
-- Lightweight and easy to integrate
+- Convert headers, bold, italic, links, and more from Markdown to Slack's mrkdwn.
+- Supports nested lists and blockquotes.
+- Handles inline code and images.
 
-## Dependencies
+## Installation
 
-Required dependencies are listed in `requirements.txt`:
+You can install the package via pip:
 
+```bash
+pip install markdown_to_mrkdwn
 ```
-markdown2>=2.4.0
-pytest>=7.3.1
+
+## Usage
+
+Here's a simple example of how to use the library:
+
+```python
+from markdown_to_mrkdwn.converter import SlackMarkdownConverter
+
+converter = SlackMarkdownConverter()
+markdown_text = """
+# Header 1
+**Bold text**
+- List item
+[Link](https://example.com)
+"""
+mrkdwn_text = converter.convert(markdown_text)
+print(mrkdwn_text)
 ```
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## Testing
-
-Run tests using pytest:
-
-```bash
-pytest tests/
-```
-
-## Performance Considerations
-
-- Designed for efficient Markdown to Slack conversion
-- Minimal overhead
-- Supports most common Markdown elements
-
-## Limitations
-
-- Complex nested Markdown structures might require additional parsing
-- Some advanced Markdown features may not be fully supported
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contact
-
-Project Link: [https://github.com/02tYasui/markdown_to_mrkdwn](https://github.com/02tYasui/markdown_to_mrkdwn)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

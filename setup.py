@@ -1,25 +1,19 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="markdown-to-mrkdwn",
+    name="markdown_to_mrkdwn",
     version="0.1.0",
-    packages=find_packages(),
-    install_requires=[
-        "markdown2>=2.4.0",
-    ],
-    author="02tYasui",
-    author_email="yasutai12@gmail.com",
-    description="Convert standard Markdown to Slack's mrkdwn format",
+    description="A library to convert Markdown to Slack's mrkdwn format",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
+    author="02tYasui",
+    author_email="yasutai12@gmail.com",
     url="https://github.com/02tYasui/markdown_to_mrkdwn",
+    packages=find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
+        "Operating System :: OS Independent",
     ],
-    keywords="markdown slack conversion",
+    python_requires='>=3.6',
 )
