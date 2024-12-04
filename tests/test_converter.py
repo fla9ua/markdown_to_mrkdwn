@@ -1,6 +1,7 @@
 import unittest
 from markdown_to_mrkdwn.converter import SlackMarkdownConverter
 
+
 class TestSlackMarkdownConverter(unittest.TestCase):
     def setUp(self):
         self.converter = SlackMarkdownConverter()
@@ -18,7 +19,10 @@ class TestSlackMarkdownConverter(unittest.TestCase):
         self.assertEqual(self.converter.convert("*italic text*"), "_italic text_")
 
     def test_convert_links(self):
-        self.assertEqual(self.converter.convert("[link](http://example.com)"), "<http://example.com|link>")
+        self.assertEqual(
+            self.converter.convert("[link](http://example.com)"),
+            "<http://example.com|link>",
+        )
 
     def test_convert_inline_code(self):
         self.assertEqual(self.converter.convert("`code`"), "`code`")
@@ -30,7 +34,10 @@ class TestSlackMarkdownConverter(unittest.TestCase):
         self.assertEqual(self.converter.convert("> quote"), "> quote")
 
     def test_convert_images(self):
-        self.assertEqual(self.converter.convert("![alt text](http://example.com/image.png)"), "<http://example.com/image.png>")
+        self.assertEqual(
+            self.converter.convert("![alt text](http://example.com/image.png)"),
+            "<http://example.com/image.png>",
+        )
 
     def test_convert_horizontal_rule(self):
         self.assertEqual(self.converter.convert("---"), "──────────")
@@ -78,6 +85,7 @@ def hello_world():
     print("Hello, world!")
 ```"""
         self.assertEqual(self.converter.convert(markdown), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
