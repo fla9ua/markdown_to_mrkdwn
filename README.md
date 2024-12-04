@@ -1,6 +1,6 @@
 # markdown_to_mrkdwn
 
-[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://02tyasui.github.io/markdown_to_mrkdwn/)
+[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://02tyasui.github.io/markdown_to_mrkdwn/markdown_to_mrkdwn.html)
 
 MarkdownをSlackのmrkdwn形式に変換するライブラリです。
 
