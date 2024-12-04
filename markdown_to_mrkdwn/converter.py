@@ -3,7 +3,21 @@ from typing import List, Tuple
 
 
 class SlackMarkdownConverter:
+    """
+    A converter class to transform Markdown text into Slack's mrkdwn format.
+
+    Attributes:
+        encoding (str): The character encoding used for the conversion.
+        patterns (List[Tuple[str, str]]): A list of regex patterns and their replacements.
+    """
+
     def __init__(self, encoding="utf-8"):
+        """
+        Initializes the SlackMarkdownConverter with a specified encoding.
+
+        Args:
+            encoding (str): The character encoding to use for the conversion. Default is 'utf-8'.
+        """
         self.encoding = encoding
         self.patterns: List[Tuple[str, str]] = [
             (r"!\[.*?\]\((.+?)\)", r"<\1>"),  # Images to URL
@@ -21,7 +35,15 @@ class SlackMarkdownConverter:
         ]
 
     def convert(self, markdown: str) -> str:
-        """Convert Markdown to Slack's mrkdwn format."""
+        """
+        Convert Markdown text to Slack's mrkdwn format.
+
+        Args:
+            markdown (str): The Markdown text to convert.
+
+        Returns:
+            str: The converted text in Slack's mrkdwn format.
+        """
         if not markdown:
             return ""
 
@@ -38,7 +60,15 @@ class SlackMarkdownConverter:
             return markdown
 
     def _convert_line(self, line: str) -> str:
-        """Convert a single line of Markdown."""
+        """
+        Convert a single line of Markdown.
+
+        Args:
+            line (str): A single line of Markdown text.
+
+        Returns:
+            str: The converted line in Slack's mrkdwn format.
+        """
         original_line = line
         for pattern, replacement in self.patterns:
             if line == original_line:
