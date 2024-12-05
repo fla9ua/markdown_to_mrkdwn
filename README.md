@@ -43,8 +43,8 @@ Slack Block Kit Builderで出力を確認してください:
 
 ## コントリビューション
 
-遠慮なくpull request・issueお送りください
+遠慮なくpull request・issue等お送りください
 
 ## ライセンス
 
-このプロジェクトはMITライセンスの下でライセンスされています。詳細は[LICENSE](LICENSE)ファイルを参照してください。
+このプロジェクトはMITライセンス([LICENSE](LICENSE))の下でライセンスされています。  
