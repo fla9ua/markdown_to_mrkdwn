@@ -86,6 +86,11 @@ def hello_world():
 ```"""
         self.assertEqual(self.converter.convert(markdown), expected)
 
+    def test_convert_bold_in_list(self):
+        markdown = "- **test**: a"
+        expected = "• *test* : a"
+        self.assertEqual(self.converter.convert(markdown), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
