@@ -3,8 +3,14 @@ name: Python Unit Tests
 on:
   push:
     branches: [ main, master ]
+    paths:
+      - 'markdown_to_mrkdwn/**'
+      - 'tests/**'
   pull_request:
     branches: [ main, master ]
+    paths:
+      - 'markdown_to_mrkdwn/**'
+      - 'tests/**'
 
 jobs:
   test:
