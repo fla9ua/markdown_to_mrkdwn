@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 import markdown_to_mrkdwn
 
 DESCRIPTION = "A library to convert Markdown to Slack's mrkdwn format"
-NAME = 'markdown_to_mrkdwn'
-AUTHOR = '02tYasui'
-AUTHOR_EMAIL = 'yasutai12@gmail.com'
-URL = 'https://github.com/02tYasui/markdown_to_mrkdwn'
-LICENSE = 'MIT License'
-DOWNLOAD_URL = 'https://github.com/02tYasui/markdown_to_mrkdwn'
+NAME = "markdown_to_mrkdwn"
+AUTHOR = "02tYasui"
+AUTHOR_EMAIL = "yasutai12@gmail.com"
+URL = "https://github.com/02tYasui/markdown_to_mrkdwn"
+LICENSE = "MIT License"
+DOWNLOAD_URL = "https://github.com/02tYasui/markdown_to_mrkdwn"
 VERSION = markdown_to_mrkdwn.__version__
 PYTHON_REQUIRES = ">=3.6"
 
@@ -22,12 +22,12 @@ EXTRAS_REQUIRE = {
 PACKAGES = find_packages()
 
 CLASSIFIERS = [
-    'Programming Language :: Python :: 3',
-    'License :: OSI Approved :: MIT License',
-    'Operating System :: OS Independent',
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 
-with open('README.md', 'r', encoding='utf-8') as fp:
+with open("README.md", "r", encoding="utf-8") as fp:
     long_description = fp.read()
 
 setup(
@@ -36,7 +36,7 @@ setup(
     author_email=AUTHOR_EMAIL,
     description=DESCRIPTION,
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     license=LICENSE,
     url=URL,
     version=VERSION,
@@ -45,5 +45,5 @@ setup(
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
     packages=PACKAGES,
-    classifiers=CLASSIFIERS
+    classifiers=CLASSIFIERS,
 )
