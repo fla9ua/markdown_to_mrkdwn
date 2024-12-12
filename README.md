@@ -1,6 +1,8 @@
 # markdown_to_mrkdwn
-
-[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://02tyasui.github.io/markdown_to_mrkdwn/markdown_to_mrkdwn.html)
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![PyPI Version](https://img.shields.io/pypi/v/markdown-to-mrkdwn.svg?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/markdown-to-mrkdwn/)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square)](https://02tyasui.github.io/markdown_to_mrkdwn/)
+[![GitHub Stars](https://img.shields.io/github/stars/02tyasui/markdown_to_mrkdwn?style=social)](https://github.com/02tyasui/markdown_to_mrkdwn)
 
 MarkdownをSlackのmrkdwn形式に変換するライブラリです。
 
@@ -41,8 +43,8 @@ Slack Block Kit Builderで出力を確認してください:
 
 ## コントリビューション
 
-遠慮なくpull request・issueお送りください
+遠慮なくpull request・issue等お送りください
 
 ## ライセンス
 
-このプロジェクトはMITライセンスの下でライセンスされています。詳細は[LICENSE](LICENSE)ファイルを参照してください。
+このプロジェクトはMITライセンス([LICENSE](LICENSE))の下でライセンスされています。  
