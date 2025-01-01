@@ -3,6 +3,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/02tYasui/markdown_to_mrkdwn)
 [![PyPI Version](https://img.shields.io/pypi/v/markdown-to-mrkdwn.svg?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/markdown-to-mrkdwn/)
+[![PyPI Downloads](https://static.pepy.tech/badge/markdown-to-mrkdwn)](https://pepy.tech/projects/markdown-to-mrkdwn)
 [![Python Unit Tests](https://github.com/02tYasui/markdown_to_mrkdwn/actions/workflows/python-tests.yml/badge.svg)](https://github.com/02tYasui/markdown_to_mrkdwn/actions/workflows/python-tests.yml)
 [![codecov](https://codecov.io/gh/02tYasui/markdown_to_mrkdwn/branch/main/graph/badge.svg)](https://codecov.io/gh/02tYasui/markdown_to_mrkdwn)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square)](https://02tyasui.github.io/markdown_to_mrkdwn/)
