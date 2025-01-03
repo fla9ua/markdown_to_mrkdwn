@@ -9,17 +9,14 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square)](https://02tyasui.github.io/markdown_to_mrkdwn/)
 [![GitHub Stars](https://img.shields.io/github/stars/02tyasui/markdown_to_mrkdwn?style=social)](https://github.com/02tyasui/markdown_to_mrkdwn)
 
-MarkdownをSlackのmrkdwn形式に変換するライブラリです。
+MarkdownをSlackのmrkdwn形式に変換するライブラリ
 
 ## 特徴
 
-- MarkdownからSlackのmrkdwn形式への変換をサポートします。
-- ネストされたリストや引用をサポートします。
-- インラインコードや画像を処理します。
+- MarkdownからSlackのmrkdwn形式への変換をサポート
+- ネストされたリストや引用・インラインコード・画像URLをサポート
 
 ## インストール
-
-pipを使用してパッケージをインストールできます。
 
 ```bash
 pip install markdown_to_mrkdwn
@@ -34,10 +31,10 @@ from markdown_to_mrkdwn import SlackMarkdownConverter
 
 converter = SlackMarkdownConverter()
 markdown_text = """
-# ヘッダー1
-**太字のテキスト**
-- リスト項目
-[リンク](https://example.com)
+# header1
+**bold text**
+- list
+[link](https://example.com)
 """
 mrkdwn_text = converter.convert(markdown_text)
 print(mrkdwn_text)
