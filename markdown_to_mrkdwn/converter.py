@@ -19,6 +19,7 @@ class SlackMarkdownConverter:
             encoding (str): The character encoding to use for the conversion. Default is 'utf-8'.
         """
         self.encoding = encoding
+        self.in_code_block = False
         self.patterns: List[Tuple[str, str]] = [
             (r"^(\s*)- (.+)", r"\1• \2"),  # Unordered list
             (r"!\[.*?\]\((.+?)\)", r"<\1>"),  # Images to URL
@@ -70,6 +71,15 @@ class SlackMarkdownConverter:
         Returns:
             str: The converted line in Slack's mrkdwn format.
         """
+        # Toggle code block state
+        if line.startswith("```"):
+            self.in_code_block = not self.in_code_block
+            return line
+
+        # Skip conversion if inside code block
+        if self.in_code_block:
+            return line
+
         for pattern, replacement in self.patterns:
             line = re.sub(pattern, replacement, line, flags=re.MULTILINE)
 
