@@ -9,22 +9,22 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square)](https://02tyasui.github.io/markdown_to_mrkdwn/)
 [![GitHub Stars](https://img.shields.io/github/stars/02tyasui/markdown_to_mrkdwn?style=social)](https://github.com/02tyasui/markdown_to_mrkdwn)
 
-MarkdownをSlackのmrkdwn形式に変換するライブラリ
+A library for converting Markdown to Slack's mrkdwn format
 
-## 特徴
+## Features
 
-- MarkdownからSlackのmrkdwn形式への変換をサポート
-- ネストされたリストや引用・インラインコード・画像URLをサポート
+- Supports conversion from Markdown to Slack's mrkdwn format
+- Supports nested lists, quotes, inline code, and image URLs
 
-## インストール
+## Installation
 
 ```bash
 pip install markdown_to_mrkdwn
 ```
 
-## 使用方法
+## Usage
 
-ライブラリの簡単な使用例を以下に示します。
+Here's a simple example of how to use the library:
 
 ```python
 from markdown_to_mrkdwn import SlackMarkdownConverter
@@ -40,13 +40,13 @@ mrkdwn_text = converter.convert(markdown_text)
 print(mrkdwn_text)
 ```
 
-Slack Block Kit Builderで出力を確認してください:
+Check the output in Slack Block Kit Builder:
 [Slack Block Kit Builder](https://app.slack.com/block-kit-builder/T01R1PV07QQ#%7B%22blocks%22:%5B%7B%22type%22:%22section%22,%22text%22:%7B%22type%22:%22mrkdwn%22,%22text%22:%22This%20is%20a%20mrkdwn%20section%20block%20:ghost:%20*this%20is%20bold*,%20and%20~this%20is%20crossed%20out~,%20and%20%3Chttps://google.com%7Cthis%20is%20a%20link%3E%22%7D%7D%5D%7D)
 
-## コントリビューション
+## Contributing
 
-遠慮なくpull request・issue等お送りください
+Feel free to send pull requests and issues
 
-## ライセンス
+## License
 
-このプロジェクトはMITライセンス([LICENSE](LICENSE))の下でライセンスされています。  
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

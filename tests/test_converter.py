@@ -86,6 +86,34 @@ def hello_world():
 ```"""
         self.assertEqual(self.converter.convert(markdown), expected)
 
+    def test_code_block_with_cron(self):
+        markdown = """```cron
+# comment
+0 */12 * * * certbot renew --quiet
+```"""
+        expected = """```cron
+# comment
+0 */12 * * * certbot renew --quiet
+```"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_mixed_code_block_and_markdown(self):
+        markdown = """```cron
+# comment
+0 */12 * * * certbot renew --quiet
+```
+
+# comment
+0 */12 * * * certbot renew --quiet"""
+        expected = """```cron
+# comment
+0 */12 * * * certbot renew --quiet
+```
+
+*comment*
+0 _/12 _  _ _  certbot renew --quiet"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
     def test_convert_bold_in_list(self):
         markdown = "- **test**: a"
         expected = "• *test* : a"
