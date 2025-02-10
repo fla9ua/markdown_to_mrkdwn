@@ -2,14 +2,14 @@
 
 ## [0.1.2] - 2025-01-25
 ### Fixed
-- Fixed code block conversion issue [#5](https://github.com/02tYasui/markdown_to_mrkdwn/issues/5)
+- Fixed code block conversion issue [#5](https://github.com/fla9ua/markdown_to_mrkdwn/issues/5)
   - Added code block state tracking
   - Skip conversion inside code blocks
   - Added related test cases
 
 ## [0.1.1] - 2024-12-13
 ### Changed
-- Bug fix [#1](https://github.com/02tYasui/markdown_to_mrkdwn/issues/1)
+- Bug fix [#1](https://github.com/fla9ua/markdown_to_mrkdwn/issues/1)
 
 ## [0.1.0] - 2024-12-05
 ### Changed

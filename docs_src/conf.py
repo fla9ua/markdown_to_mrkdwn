@@ -10,8 +10,8 @@ sys.path.insert(0, os.path.abspath(".."))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "markdown_to_mrkdwn"
-copyright = "2024, 02tYasui"
-author = "02tYasui"
+copyright = "2024, fla9ua"
+author = "fla9ua"
 import markdown_to_mrkdwn
 release = markdown_to_mrkdwn.__version__
 

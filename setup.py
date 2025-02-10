@@ -3,11 +3,11 @@ import markdown_to_mrkdwn
 
 DESCRIPTION = "A library to convert Markdown to Slack's mrkdwn format"
 NAME = "markdown_to_mrkdwn"
-AUTHOR = "02tYasui"
-AUTHOR_EMAIL = "yasutai12@gmail.com"
-URL = "https://github.com/02tYasui/markdown_to_mrkdwn"
+AUTHOR = "fla9ua"
+AUTHOR_EMAIL = "fla9ua@gmail.com"
+URL = "https://github.com/fla9ua/markdown_to_mrkdwn"
 LICENSE = "MIT License"
-DOWNLOAD_URL = "https://github.com/02tYasui/markdown_to_mrkdwn"
+DOWNLOAD_URL = "https://github.com/fla9ua/markdown_to_mrkdwn"
 VERSION = markdown_to_mrkdwn.__version__
 PYTHON_REQUIRES = ">=3.6"
 
