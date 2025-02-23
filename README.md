@@ -19,7 +19,7 @@ A library for converting Markdown to Slack's mrkdwn format
 ## Installation
 
 ```bash
-pip install markdown_to_mrkdwn
+pip install markdown-to-mrkdwn
 ```
 
 ## Usage
