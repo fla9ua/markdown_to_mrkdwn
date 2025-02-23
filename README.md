@@ -27,7 +27,7 @@ pip install markdown-to-mrkdwn
 Here's a simple example of how to use the library:
 
 ```python
-from markdown_to_mrkdwn import SlackMarkdownConverter
+from markdown-to-mrkdwn import SlackMarkdownConverter
 
 converter = SlackMarkdownConverter()
 markdown_text = """
