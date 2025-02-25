@@ -1,4 +1,12 @@
 # Changelog
+## [0.1.4] - 2025-02-25
+### Fixed
+- Fixed an issue where both bold and italic text was converted incorrectly [#8](https://github.com/fla9ua/markdown_to_mrkdwn/issues/8)
+  - Added related test cases
+
+## [0.1.3] - 2025-02-10
+### Changed
+- Rename Author
 
 ## [0.1.2] - 2025-01-25
 ### Fixed
