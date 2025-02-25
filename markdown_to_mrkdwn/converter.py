@@ -33,8 +33,11 @@ class SlackMarkdownConverter:
             (r"\[(.+?)\]\((.+?)\)", r"<\2|\1> "),  # Links
             (r"`(.+?)`", r"`\1` "),  # Inline code
             (r"^> (.+)", r"> \1"),  # Blockquote
-            (r"(---|\*\*\*|___)", r"──────────"),  # Horizontal rule
+            (r"^(---|\*\*\*|___)$", r"──────────"),  # Horizontal line (only full line) 
         ]
+        # Placeholders for triple emphasis
+        self.triple_start = "%%BOLDITALIC_START%%"
+        self.triple_end = "%%BOLDITALIC_END%%"
 
     def convert(self, markdown: str) -> str:
         """
@@ -80,7 +83,21 @@ class SlackMarkdownConverter:
         if self.in_code_block:
             return line
 
+        line = re.sub(
+            r"(?<!\*)\*\*\*([^*\n]+?)\*\*\*(?!\*)",
+            lambda m: f"{self.triple_start}{m.group(1)}{self.triple_end}",
+            line,
+            flags=re.MULTILINE,
+        )
+
         for pattern, replacement in self.patterns:
             line = re.sub(pattern, replacement, line, flags=re.MULTILINE)
+
+        line = re.sub(
+            re.escape(self.triple_start) + r"(.*?)" + re.escape(self.triple_end),
+            r"*_\1_*",
+            line,
+            flags=re.MULTILINE,
+        )
 
         return line.rstrip()

@@ -119,6 +119,11 @@ def hello_world():
         expected = "• *test* : a"
         self.assertEqual(self.converter.convert(markdown), expected)
 
+    def test_convert_bold_and_underline(self):
+        markdown = "This is ***bold and italic***"
+        expected = "This is *_bold and italic_*"
+        self.assertEqual(self.converter.convert(markdown), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
