@@ -111,17 +111,22 @@ def hello_world():
 ```
 
 *comment*
-0 _/12 _  _ _  certbot renew --quiet"""
+0 _/12 _ _ _ certbot renew --quiet"""
         self.assertEqual(self.converter.convert(markdown), expected)
 
     def test_convert_bold_in_list(self):
         markdown = "- **test**: a"
-        expected = "• *test* : a"
+        expected = "• *test*: a"
         self.assertEqual(self.converter.convert(markdown), expected)
 
     def test_convert_bold_and_underline(self):
         markdown = "This is ***bold and italic***"
         expected = "This is *_bold and italic_*"
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_convert_strikethrough(self):
+        markdown = "This is ~~strikethrough~~ text"
+        expected = "This is ~strikethrough~ text"
         self.assertEqual(self.converter.convert(markdown), expected)
 
 

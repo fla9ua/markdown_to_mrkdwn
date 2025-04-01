@@ -1,4 +1,5 @@
 import re
+import logging
 from typing import List, Tuple
 
 
@@ -20,20 +21,22 @@ class SlackMarkdownConverter:
         """
         self.encoding = encoding
         self.in_code_block = False
-        self.patterns: List[Tuple[str, str]] = [
-            (r"^(\s*)- (.+)", r"\1• \2"),  # Unordered list
-            (r"!\[.*?\]\((.+?)\)", r"<\1>"),  # Images to URL
-            (r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"_\1_ "),  # Italic
-            (r"^### (.+)$", r"*\1* "),  # H3 as bold
-            (r"^## (.+)$", r"*\1* "),  # H2 as bold
-            (r"^# (.+)$", r"*\1* "),  # H1 as bold
-            (r"(^|\s)~\*\*(.+?)\*\*(\s|$)", r"\1 *\2* \3"),  # Bold with space handling
-            (r"(?<!\*)\*\*(.+?)\*\*(?!\*)", r"*\1* "),  # Bold
-            (r"__(.+?)__", r"*\1* "),  # Underline as bold
-            (r"\[(.+?)\]\((.+?)\)", r"<\2|\1> "),  # Links
-            (r"`(.+?)`", r"`\1` "),  # Inline code
-            (r"^> (.+)", r"> \1"),  # Blockquote
-            (r"^(---|\*\*\*|___)$", r"──────────"),  # Horizontal line (only full line) 
+        # Use compiled regex patterns for better performance
+        self.patterns: List[Tuple[re.Pattern, str]] = [
+            (re.compile(r"^(\s*)- (.+)", re.MULTILINE), r"\1• \2"),  # Unordered list
+            (re.compile(r"!\[.*?\]\((.+?)\)", re.MULTILINE), r"<\1>"),  # Images to URL
+            (re.compile(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", re.MULTILINE), r"_\1_"),  # Italic
+            (re.compile(r"^### (.+)$", re.MULTILINE), r"*\1*"),  # H3 as bold
+            (re.compile(r"^## (.+)$", re.MULTILINE), r"*\1*"),  # H2 as bold
+            (re.compile(r"^# (.+)$", re.MULTILINE), r"*\1*"),  # H1 as bold
+            (re.compile(r"(^|\s)~\*\*(.+?)\*\*(\s|$)", re.MULTILINE), r"\1 *\2* \3"),  # Bold with space handling
+            (re.compile(r"(?<!\*)\*\*(.+?)\*\*(?!\*)", re.MULTILINE), r"*\1*"),  # Bold
+            (re.compile(r"__(.+?)__", re.MULTILINE), r"*\1*"),  # Underline as bold
+            (re.compile(r"\[(.+?)\]\((.+?)\)", re.MULTILINE), r"<\2|\1>"),  # Links
+            (re.compile(r"`(.+?)`", re.MULTILINE), r"`\1`"),  # Inline code
+            (re.compile(r"^> (.+)", re.MULTILINE), r"> \1"),  # Blockquote
+            (re.compile(r"^(---|\*\*\*|___)$", re.MULTILINE), r"──────────"),  # Horizontal line
+            (re.compile(r"~~(.+?)~~", re.MULTILINE), r"~\1~"),  # Strikethrough
         ]
         # Placeholders for triple emphasis
         self.triple_start = "%%BOLDITALIC_START%%"
@@ -53,15 +56,18 @@ class SlackMarkdownConverter:
             return ""
 
         try:
+            # Remove leading and trailing whitespace
+            markdown = markdown.strip()
             lines = markdown.split("\n")
             converted_lines = [self._convert_line(line) for line in lines]
             return (
                 "\n".join(converted_lines)
-                .strip()
                 .encode(self.encoding)
                 .decode(self.encoding)
             )
-        except Exception:
+        except Exception as e:
+            # Log the error for debugging
+            logging.error(f"Markdown conversion error: {str(e)}")
             return markdown
 
     def _convert_line(self, line: str) -> str:
@@ -74,8 +80,8 @@ class SlackMarkdownConverter:
         Returns:
             str: The converted line in Slack's mrkdwn format.
         """
-        # Toggle code block state
-        if line.startswith("```"):
+        # Detect code block start/end (supports language specification)
+        if re.match(r"^```(\w*)$", line):
             self.in_code_block = not self.in_code_block
             return line
 
@@ -83,15 +89,16 @@ class SlackMarkdownConverter:
         if self.in_code_block:
             return line
 
+        # Process bold and italic text
         line = re.sub(
             r"(?<!\*)\*\*\*([^*\n]+?)\*\*\*(?!\*)",
             lambda m: f"{self.triple_start}{m.group(1)}{self.triple_end}",
             line,
-            flags=re.MULTILINE,
         )
 
+        # Apply compiled patterns
         for pattern, replacement in self.patterns:
-            line = re.sub(pattern, replacement, line, flags=re.MULTILINE)
+            line = pattern.sub(replacement, line)
 
         line = re.sub(
             re.escape(self.triple_start) + r"(.*?)" + re.escape(self.triple_end),
