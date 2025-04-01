@@ -18,6 +18,8 @@ Features
   - Headings (H1, H2, H3)
   - Text formatting (bold, italic, strikethrough)
   - Lists (ordered and unordered, with nesting)
+  - Task lists (checked and unchecked items)
+  - Tables (with header formatting)
   - Links and image references
   - Code blocks (with language specification)
   - Blockquotes
@@ -37,7 +39,7 @@ Install from PyPI using pip:
 
 Requirements:
 
-- Python 3.6 or higher
+- Python 3.8 or higher
 
 Usage
 -----
