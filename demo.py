@@ -1,11 +1,12 @@
 import sys
 import io
-from markdown_to_mrkdwn import SlackMarkdownConverter
+import json
+from markdown_to_mrkdwn import SlackMarkdownConverter, BlockKitConverter
 
 # Set the standard output encoding to UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-converter = SlackMarkdownConverter()
+# Sample markdown text
 markdown_text = """
 # Heading 1
 ## Heading 2
@@ -23,11 +24,11 @@ This is a test of **bold** and *italic* text.
 1. Numbered list 1
 2. Numbered list 2
 
-[Link example](https://example.com)
+[Link example](https://www.instagram.com/fla9ua)
 
 `Inline code`
 
-![Image example](https://example.com/image.png)
+![Image example](https://picsum.photos/300/200)
 ___
 ~~Strikethrough text~~
 
@@ -54,6 +55,10 @@ print("Hello, World!")
 ```
 
 """
+
+# Demo 1: Convert to mrkdwn text format
+print("=== DEMO 1: MARKDOWN TO MRKDWN TEXT ===\n")
+converter = SlackMarkdownConverter()
 mrkdwn_text = converter.convert(markdown_text)
 print(mrkdwn_text)
 
@@ -63,3 +68,13 @@ for before, after in zip(markdown_text.strip().split('\n'), mrkdwn_text.split('\
     print(f"Before: [{before}]")
     print(f"After:  [{after}]")
     print()
+
+# Demo 2: Convert to Block Kit JSON format
+print("\n=== DEMO 2: MARKDOWN TO BLOCK KIT JSON ===\n")
+block_kit_converter = BlockKitConverter()
+block_kit_json = block_kit_converter.convert_to_blocks(markdown_text)
+
+# Print the JSON with indentation for readability
+print(json.dumps(block_kit_json, indent=2))
+
+print("\n=== DEMO COMPLETE ===")

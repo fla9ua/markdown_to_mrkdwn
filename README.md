@@ -15,6 +15,9 @@ A lightweight, efficient library for converting standard Markdown to Slack's mrk
 
 - Fast and lightweight conversion from Markdown to Slack's mrkdwn format
 - No external dependencies
+- Two conversion options:
+  - Convert to Slack's mrkdwn text format
+  - Convert to Slack's Block Kit JSON format
 - Comprehensive support for Markdown elements:
   - Headings (H1, H2, H3)
   - Text formatting (bold, italic, strikethrough)
@@ -92,6 +95,83 @@ print(mrkdwn_text)
 | `---` | `──────────` |
 | Tables | Simple text tables with bold headers |
 
+### Block Kit Conversion
+
+You can also convert Markdown to Slack's Block Kit JSON format:
+
+```python
+from markdown_to_mrkdwn import BlockKitConverter
+import json
+
+# Create a Block Kit converter instance
+converter = BlockKitConverter()
+
+# Convert markdown to Block Kit JSON
+markdown_text = """
+# Heading 1
+**Bold text**
+- List item
+[Link](https://example.com)
+```python
+print("Code block")
+```
+"""
+block_kit_json = converter.convert_to_blocks(markdown_text)
+
+# Print the JSON (for demonstration)
+print(json.dumps(block_kit_json, indent=2))
+
+# Use with Slack API
+# from slack_sdk import WebClient
+# client = WebClient(token="your-token")
+# client.chat_postMessage(channel="#general", blocks=block_kit_json["blocks"])
+```
+
+### Block Kit Output Example
+
+```json
+{
+  "blocks": [
+    {
+      "type": "header",
+      "text": {
+        "type": "plain_text",
+        "text": "Heading 1",
+        "emoji": true
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Bold text*"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "• List item"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "<https://example.com|Link>"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "```python\nprint(\"Code block\")\n```"
+      }
+    }
+  ]
+}
+```
+
 ### Testing in Slack
 
 You can test the output in Slack Block Kit Builder:
@@ -117,6 +197,22 @@ try:
 except Exception as e:
     print(f"Conversion error: {e}")
 ```
+
+### Block Kit Conversion Options
+
+The Block Kit converter maps Markdown elements to appropriate Block Kit blocks:
+
+| Markdown Element | Block Kit Block |
+|------------------|----------------|
+| Heading 1 | Header block |
+| Heading 2-3 | Section block with bold text |
+| Paragraph | Section block |
+| List | Section block with formatted list |
+| Code block | Section block with code formatting |
+| Blockquote | Section block with quote formatting |
+| Image | Image block |
+| Horizontal rule | Divider block |
+| Table | Section block with formatted table |
 
 ## Contributing
 

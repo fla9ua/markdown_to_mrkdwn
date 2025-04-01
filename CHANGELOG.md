@@ -1,4 +1,12 @@
 # Changelog
+## [0.2.0] - 2025-04-01
+### Added
+- Added Block Kit JSON conversion support
+  - New `BlockKitConverter` class for converting Markdown to Slack Block Kit JSON format
+  - Support for all Markdown elements as Block Kit blocks
+  - Comprehensive test suite for Block Kit conversion
+  - Updated documentation and examples
+
 ## [0.1.5] - 2025-04-01
 ### Fixed
 - Fixed Sphinx documentation issues
