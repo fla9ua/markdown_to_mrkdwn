@@ -1,5 +1,5 @@
 # Changelog
-## [0.1.6] - 2025-04-01
+## [0.1.6] - 2025-04-02
 ### Added
 - Added support for ordered lists (numbered lists with proper indentation)
 - Improved code block handling to preserve language specification
