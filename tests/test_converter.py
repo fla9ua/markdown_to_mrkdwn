@@ -151,6 +151,25 @@ Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3"""
         expected = """*Left* | *Center* | *Right*
 Left-aligned | Center-aligned | Right-aligned"""
         self.assertEqual(self.converter.convert(markdown), expected)
+        
+    def test_error_handling(self):
+        """Test that the converter returns the original markdown when an exception occurs."""
+        # Create a converter with a method that will raise an exception
+        converter = SlackMarkdownConverter()
+        
+        # Mock the _convert_tables method to raise an exception
+        original_convert_tables = converter._convert_tables
+        def mock_convert_tables(markdown):
+            raise Exception("Test exception")
+        converter._convert_tables = mock_convert_tables
+        
+        # Test that the original markdown is returned when an exception occurs
+        markdown = "# Test markdown"
+        result = converter.convert(markdown)
+        self.assertEqual(result, markdown)
+        
+        # Restore the original method
+        converter._convert_tables = original_convert_tables
 
 
 if __name__ == "__main__":
