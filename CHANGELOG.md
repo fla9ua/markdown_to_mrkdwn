@@ -1,4 +1,12 @@
 # Changelog
+## [0.1.5] - 2025-04-01
+### Fixed
+- Fixed Sphinx documentation issues
+  - Added proper toctree references in index.rst
+  - Enhanced documentation content with installation and usage examples
+  - Improved navigation between documentation pages
+- Added support for strikethrough text conversion (~~text~~ to ~text~)
+
 ## [0.1.4] - 2025-02-25
 ### Fixed
 - Fixed an issue where both bold and italic text was converted incorrectly [#8](https://github.com/fla9ua/markdown_to_mrkdwn/issues/8)
