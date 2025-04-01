@@ -1,6 +1,12 @@
 name: Python Unit Tests
 
 # This workflow runs Python unit tests
+permissions:
+  contents: read
+  actions: write  # For uploading artifacts
+  checks: write   # For test results
+  pull-requests: write  # For commenting on PRs
+
 on:
   push:
     branches: [ main, master ]

@@ -1,6 +1,10 @@
 name: PyPI Release
 
 # This workflow publishes the package to PyPI when a new release is created
+permissions:
+  contents: read
+  id-token: write  # For PyPI authentication
+
 on:
   release:
     types: [created]
