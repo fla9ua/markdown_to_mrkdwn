@@ -19,6 +19,8 @@ A lightweight, efficient library for converting standard Markdown to Slack's mrk
   - Headings (H1, H2, H3)
   - Text formatting (bold, italic, strikethrough)
   - Lists (ordered and unordered, with nesting)
+  - Task lists (checked and unchecked items)
+  - Tables (with header formatting)
   - Links and image references
   - Code blocks (with language specification)
   - Blockquotes
@@ -35,7 +37,7 @@ pip install markdown_to_mrkdwn
 ```
 
 Requirements:
-- Python 3.6 or higher
+- Python 3.8 or higher
 
 ## Usage
 
@@ -83,9 +85,12 @@ print(mrkdwn_text)
 | `[Link](https://example.com)` | `<https://example.com\|Link>` |
 | `![Image](https://example.com/img.png)` | `<https://example.com/img.png>` |
 | `- List item` | `• List item` |
+| `- [ ] Task` | `• ☐ Task` |
+| `- [x] Task` | `• ☑ Task` |
 | `> Quote` | `> Quote` |
 | `` `Code` `` | `` `Code` `` |
 | `---` | `──────────` |
+| Tables | Simple text tables with bold headers |
 
 ### Testing in Slack
 

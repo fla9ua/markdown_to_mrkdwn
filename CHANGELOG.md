@@ -5,6 +5,9 @@
   - Added proper toctree references in index.rst
   - Enhanced documentation content with installation and usage examples
   - Improved navigation between documentation pages
+### Added
+- Added support for task lists (- [ ] task, - [x] task)
+- Added support for Markdown tables
 - Added support for strikethrough text conversion (~~text~~ to ~text~)
 
 ## [0.1.4] - 2025-02-25

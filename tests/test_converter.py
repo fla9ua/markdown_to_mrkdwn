@@ -128,6 +128,29 @@ def hello_world():
         markdown = "This is ~~strikethrough~~ text"
         expected = "This is ~strikethrough~ text"
         self.assertEqual(self.converter.convert(markdown), expected)
+        
+    def test_convert_task_list(self):
+        markdown = "- [ ] Unchecked task\n- [x] Checked task\n- [X] Also checked task"
+        expected = "• ☐ Unchecked task\n• ☑ Checked task\n• ☑ Also checked task"
+        self.assertEqual(self.converter.convert(markdown), expected)
+        
+    def test_convert_table(self):
+        markdown = """| Header 1 | Header 2 | Header 3 |
+| --- | --- | --- |
+| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
+| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |"""
+        expected = """*Header 1* | *Header 2* | *Header 3*
+Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3
+Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+        
+    def test_convert_table_with_alignment(self):
+        markdown = """| Left | Center | Right |
+| :--- | :---: | ---: |
+| Left-aligned | Center-aligned | Right-aligned |"""
+        expected = """*Left* | *Center* | *Right*
+Left-aligned | Center-aligned | Right-aligned"""
+        self.assertEqual(self.converter.convert(markdown), expected)
 
 
 if __name__ == "__main__":

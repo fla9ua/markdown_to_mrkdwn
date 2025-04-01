@@ -30,6 +30,20 @@ This is a test of **bold** and *italic* text.
 ![Image example](https://example.com/image.png)
 ___
 ~~Strikethrough text~~
+
+- [ ] Unchecked task
+- [x] Checked task
+- [X] Also checked task
+
+| Header 1 | Header 2 | Header 3 |
+| --- | --- | --- |
+| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
+| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |
+
+| Left | Center | Right |
+| :--- | :---: | ---: |
+| Left-aligned | Center-aligned | Right-aligned |
+
 ```
 # This is a code block example
 ```

@@ -21,8 +21,11 @@ class SlackMarkdownConverter:
         """
         self.encoding = encoding
         self.in_code_block = False
+        self.table_replacements = {}
         # Use compiled regex patterns for better performance
         self.patterns: List[Tuple[re.Pattern, str]] = [
+            (re.compile(r"^(\s*)- \[([ ])\] (.+)", re.MULTILINE), r"\1• ☐ \3"),  # Unchecked task list
+            (re.compile(r"^(\s*)- \[([xX])\] (.+)", re.MULTILINE), r"\1• ☑ \3"),  # Checked task list
             (re.compile(r"^(\s*)- (.+)", re.MULTILINE), r"\1• \2"),  # Unordered list
             (re.compile(r"!\[.*?\]\((.+?)\)", re.MULTILINE), r"<\1>"),  # Images to URL
             (re.compile(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", re.MULTILINE), r"_\1_"),  # Italic
@@ -58,17 +61,77 @@ class SlackMarkdownConverter:
         try:
             # Remove leading and trailing whitespace
             markdown = markdown.strip()
+            
+            # Reset table replacements for this conversion
+            self.table_replacements = {}
+            
+            # Handle tables first - replace with placeholders
+            markdown = self._convert_tables(markdown)
+            
             lines = markdown.split("\n")
             converted_lines = [self._convert_line(line) for line in lines]
-            return (
-                "\n".join(converted_lines)
-                .encode(self.encoding)
-                .decode(self.encoding)
-            )
+            result = "\n".join(converted_lines)
+            
+            # Replace table placeholders with actual formatted tables
+            for placeholder, table in self.table_replacements.items():
+                result = result.replace(placeholder, table)
+                
+            return result.encode(self.encoding).decode(self.encoding)
         except Exception as e:
             # Log the error for debugging
             logging.error(f"Markdown conversion error: {str(e)}")
             return markdown
+            
+    def _convert_tables(self, markdown: str) -> str:
+        """
+        Convert Markdown tables to Slack's mrkdwn format.
+        
+        Args:
+            markdown (str): The Markdown text containing tables.
+            
+        Returns:
+            str: The text with tables converted to Slack's format.
+        """
+        # Find table sections
+        table_pattern = re.compile(
+            r"^\|(.+)\|\s*$\n^\|[-:| ]+\|\s*$(\n^\|.+\|\s*$)*",
+            re.MULTILINE
+        )
+        
+        def convert_table(match):
+            # Store the original match for later replacement
+            original_table = match.group(0)
+            
+            table_lines = original_table.strip().split('\n')
+            header_line = table_lines[0]
+            separator_line = table_lines[1]
+            data_lines = table_lines[2:] if len(table_lines) > 2 else []
+            
+            # Extract headers
+            headers = [cell.strip() for cell in header_line.strip('|').split('|')]
+            
+            # Process data rows
+            rows = []
+            for line in data_lines:
+                cells = [cell.strip() for cell in line.strip('|').split('|')]
+                rows.append(cells)
+            
+            # Format as Slack table
+            result = []
+            # Add headers in bold (using Slack's bold syntax)
+            result.append(' | '.join(f"*{header}*" for header in headers))
+            
+            # Add data rows
+            for row in rows:
+                result.append(' | '.join(row))
+                
+            # Return the formatted table as a placeholder that won't be processed by other patterns
+            placeholder = f"%%TABLE_PLACEHOLDER_{hash(original_table)}%%"
+            self.table_replacements[placeholder] = '\n'.join(result)
+            return placeholder
+        
+        # Replace tables with placeholders
+        return table_pattern.sub(convert_table, markdown)
 
     def _convert_line(self, line: str) -> str:
         """
@@ -80,6 +143,10 @@ class SlackMarkdownConverter:
         Returns:
             str: The converted line in Slack's mrkdwn format.
         """
+        # Skip conversion for table placeholders
+        if line.startswith("%%TABLE_PLACEHOLDER_") and line.endswith("%%"):
+            return line
+            
         # Detect code block start/end (supports language specification)
         if re.match(r"^```(\w*)$", line):
             self.in_code_block = not self.in_code_block
