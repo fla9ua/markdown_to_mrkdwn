@@ -1,6 +1,6 @@
 import re
 import logging
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Callable, Any, Optional
 
 
 class SlackMarkdownConverter:
@@ -10,6 +10,8 @@ class SlackMarkdownConverter:
     Attributes:
         encoding (str): The character encoding used for the conversion.
         patterns (List[Tuple[str, str]]): A list of regex patterns and their replacements.
+        plugins (Dict[str, Dict[str, Any]]): A dictionary of registered plugins.
+        plugin_order (List[str]): A list of plugin names in execution order.
     """
 
     def __init__(self, encoding="utf-8"):
@@ -22,6 +24,8 @@ class SlackMarkdownConverter:
         self.encoding = encoding
         self.in_code_block = False
         self.table_replacements = {}
+        self.plugins: Dict[str, Dict[str, Any]] = {}  # プラグインを格納する辞書
+        self.plugin_order: List[str] = []  # プラグインの実行順序
         # Use compiled regex patterns for better performance
         self.patterns: List[Tuple[re.Pattern, str]] = [
             (re.compile(r"^(\s*)- \[([ ])\] (.+)", re.MULTILINE), r"\1• ☐ \3"),  # Unchecked task list
@@ -44,6 +48,59 @@ class SlackMarkdownConverter:
         # Placeholders for triple emphasis
         self.triple_start = "%%BOLDITALIC_START%%"
         self.triple_end = "%%BOLDITALIC_END%%"
+
+    def register_plugin(self, name: str, converter_func: Callable[[str], str], 
+                       priority: int = 50, scope: str = "line") -> None:
+        """
+        Register a custom conversion plugin.
+        
+        Args:
+            name (str): A unique name for the plugin
+            converter_func (callable): A function that takes a text string and returns the converted text
+            priority (int): Execution priority (lower numbers execute first)
+            scope (str): Application scope - "global" (entire text), "line" (line by line), or "block" (block by block)
+        """
+        if scope not in ["global", "line", "block"]:
+            raise ValueError("Plugin scope must be 'global', 'line', or 'block'")
+            
+        self.plugins[name] = {
+            "func": converter_func,
+            "priority": priority,
+            "scope": scope
+        }
+        # Update plugin execution order based on priority (lower numbers execute first)
+        self.plugin_order = sorted(
+            self.plugins.keys(),
+            key=lambda x: self.plugins[x]["priority"]
+        )
+        
+    def remove_plugin(self, name: str) -> bool:
+        """
+        Remove a registered plugin.
+        
+        Args:
+            name (str): The name of the plugin to remove
+            
+        Returns:
+            bool: True if the plugin was removed, False if it wasn't found
+        """
+        if name in self.plugins:
+            del self.plugins[name]
+            self.plugin_order = [p for p in self.plugin_order if p != name]
+            return True
+        return False
+        
+    def get_registered_plugins(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get a list of all registered plugins.
+        
+        Returns:
+            Dict[str, Dict[str, Any]]: A dictionary of plugin names and their properties
+        """
+        return {name: {
+            "priority": info["priority"],
+            "scope": info["scope"]
+        } for name, info in self.plugins.items()}
 
     def convert(self, markdown: str) -> str:
         """
@@ -68,13 +125,42 @@ class SlackMarkdownConverter:
             # Handle tables first - replace with placeholders
             markdown = self._convert_tables(markdown)
             
+            # Apply global scope plugins
+            for plugin_name in self.plugin_order:
+                plugin = self.plugins[plugin_name]
+                if plugin["scope"] == "global":
+                    markdown = plugin["func"](markdown)
+            
             lines = markdown.split("\n")
-            converted_lines = [self._convert_line(line) for line in lines]
+            converted_lines = []
+            
+            for line in lines:
+                # Skip conversion for table placeholders
+                if line.startswith("%%TABLE_PLACEHOLDER_") and line.endswith("%%"):
+                    converted_lines.append(line)
+                    continue
+                
+                # Apply line scope plugins
+                for plugin_name in self.plugin_order:
+                    plugin = self.plugins[plugin_name]
+                    if plugin["scope"] == "line":
+                        line = plugin["func"](line)
+                
+                # Apply standard line conversion
+                line = self._convert_line(line)
+                converted_lines.append(line)
+                
             result = "\n".join(converted_lines)
             
             # Replace table placeholders with actual formatted tables
             for placeholder, table in self.table_replacements.items():
                 result = result.replace(placeholder, table)
+            
+            # Apply block scope plugins
+            for plugin_name in self.plugin_order:
+                plugin = self.plugins[plugin_name]
+                if plugin["scope"] == "block":
+                    result = plugin["func"](result)
                 
             return result.encode(self.encoding).decode(self.encoding)
         except Exception as e:

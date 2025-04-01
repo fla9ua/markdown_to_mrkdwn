@@ -1,4 +1,17 @@
 # Changelog
+## [0.1.7] - 2025-04-01
+### Added
+- Added extensible plugin system
+  - Support for custom conversion plugins
+  - Three plugin scopes: global, line, and block
+  - Plugin priority system
+  - Plugin management methods
+
+## [0.1.6] - 2025-04-01
+### Added
+- Added support for ordered lists (numbered lists with proper indentation)
+- Improved code block handling to preserve language specification
+
 ## [0.1.5] - 2025-04-01
 ### Fixed
 - Fixed Sphinx documentation issues

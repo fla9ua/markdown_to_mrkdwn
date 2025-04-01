@@ -107,6 +107,62 @@ You can specify a custom encoding when initializing the converter:
 converter = SlackMarkdownConverter()
 ```
 
+### Plugin System
+
+The library supports a flexible plugin system that allows you to extend or customize the conversion process:
+
+```python
+from markdown_to_mrkdwn import SlackMarkdownConverter
+
+# Create a converter instance
+converter = SlackMarkdownConverter()
+
+# Define a custom plugin function
+def emoji_converter(line):
+    """Convert emoji codes to actual emoji characters"""
+    emoji_map = {
+        ":smile:": "😊",
+        ":thumbsup:": "👍",
+        ":heart:": "❤️"
+    }
+    for code, emoji in emoji_map.items():
+        line = line.replace(code, emoji)
+    return line
+
+# Register the plugin
+converter.register_plugin(
+    name="emoji_converter",
+    converter_func=emoji_converter,
+    priority=10,  # Lower numbers execute first
+    scope="line"  # Process each line individually
+)
+
+# Convert markdown with emoji codes
+markdown_text = "I :smile: this feature!"
+mrkdwn_text = converter.convert(markdown_text)
+# Result: "I 😊 this feature!"
+```
+
+#### Plugin Scopes
+
+Plugins can operate at three different scopes:
+
+- `global`: Process the entire text before any standard conversions
+- `line`: Process each line individually (after standard line conversions)
+- `block`: Process the entire text after all standard conversions
+
+#### Plugin Management
+
+You can manage plugins with these methods:
+
+```python
+# Get a list of registered plugins
+plugins = converter.get_registered_plugins()
+
+# Remove a plugin
+converter.remove_plugin("emoji_converter")
+```
+
 ### Error Handling
 
 The converter will return the original markdown text if an error occurs during conversion:
