@@ -27,6 +27,7 @@ class SlackMarkdownConverter:
             (re.compile(r"^(\s*)- \[([ ])\] (.+)", re.MULTILINE), r"\1• ☐ \3"),  # Unchecked task list
             (re.compile(r"^(\s*)- \[([xX])\] (.+)", re.MULTILINE), r"\1• ☑ \3"),  # Checked task list
             (re.compile(r"^(\s*)- (.+)", re.MULTILINE), r"\1• \2"),  # Unordered list
+            (re.compile(r"^(\s*)(\d+)\. (.+)", re.MULTILINE), r"\1\2. \3"),  # Ordered list
             (re.compile(r"!\[.*?\]\((.+?)\)", re.MULTILINE), r"<\1>"),  # Images to URL
             (re.compile(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", re.MULTILINE), r"_\1_"),  # Italic
             (re.compile(r"^### (.+)$", re.MULTILINE), r"*\1*"),  # H3 as bold
@@ -148,9 +149,13 @@ class SlackMarkdownConverter:
             return line
             
         # Detect code block start/end (supports language specification)
-        if re.match(r"^```(\w*)$", line):
+        code_block_match = re.match(r"^```(\w*)$", line)
+        if code_block_match:
+            language = code_block_match.group(1)
             self.in_code_block = not self.in_code_block
-            return line
+            if self.in_code_block and language:
+                return f"```{language}"
+            return "```"
 
         # Skip conversion if inside code block
         if self.in_code_block:

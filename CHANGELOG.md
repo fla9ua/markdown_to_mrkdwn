@@ -1,4 +1,9 @@
 # Changelog
+## [0.1.6] - 2025-04-02
+### Added
+- Added support for ordered lists (numbered lists with proper indentation)
+- Improved code block handling to preserve language specification
+
 ## [0.1.5] - 2025-04-01
 ### Fixed
 - Fixed Sphinx documentation issues
