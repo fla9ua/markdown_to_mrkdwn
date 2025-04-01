@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
@@ -10,29 +10,31 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+**Steps to reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. Run the following code '...'
+2. Use the following input '....'
+3. Call the following function '....'
 4. See error
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Screenshots or error logs**
+If applicable, add screenshots or error logs to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Environment information:**
+ - OS: [e.g. Ubuntu 22.04, Windows 11, macOS 14]
+ - Python version: [e.g. 3.8.10, 3.11.2]
+ - markdown_to_mrkdwn version: [e.g. 1.0.0]
+ - Related libraries and versions: [e.g. markdown==3.4.1]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Reproduction code**
+If possible, provide a minimal code example that reproduces the issue.
+```python
+from markdown_to_mrkdwn import convert
+# Code to reproduce the issue
+```
 
 **Additional context**
 Add any other context about the problem here.

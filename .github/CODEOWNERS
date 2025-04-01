@@ -1,1 +1,21 @@
+# This is a GitHub CODEOWNERS file
+# It defines the owners of different parts of the repository
+# More info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner (if no other rule matches)
 * @fla9ua
+
+# Core library code
+/markdown_to_mrkdwn/ @fla9ua
+
+# Tests
+/tests/ @fla9ua
+
+# Documentation
+/docs/ @fla9ua
+/docs_src/ @fla9ua
+*.md @fla9ua
+*.rst @fla9ua
+
+# CI/CD configuration
+/.github/ @fla9ua

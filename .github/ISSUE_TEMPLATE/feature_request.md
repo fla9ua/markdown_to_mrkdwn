@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
@@ -15,6 +15,13 @@ A clear and concise description of what you want to happen.
 
 **Describe alternatives you've considered**
 A clear and concise description of any alternative solutions or features you've considered.
+
+**Usage example**
+If possible, provide an example of how the new feature would be used.
+```python
+from markdown_to_mrkdwn import convert
+# Example of using the new feature
+```
 
 **Additional context**
 Add any other context or screenshots about the feature request here.
