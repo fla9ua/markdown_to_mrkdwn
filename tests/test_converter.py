@@ -29,6 +29,32 @@ class TestSlackMarkdownConverter(unittest.TestCase):
 
     def test_convert_unordered_list(self):
         self.assertEqual(self.converter.convert("- item"), "• item")
+        
+    def test_convert_ordered_list(self):
+        self.assertEqual(self.converter.convert("1. item"), "1. item")
+        self.assertEqual(self.converter.convert("2. item"), "2. item")
+        
+    def test_nested_ordered_list(self):
+        markdown = """1. Item 1
+   1. Subitem 1
+   2. Subitem 2
+2. Item 2"""
+        expected = """1. Item 1
+   1. Subitem 1
+   2. Subitem 2
+2. Item 2"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+        
+    def test_mixed_list_types(self):
+        markdown = """1. Ordered item
+   - Unordered subitem
+2. Another ordered item
+   1. Ordered subitem"""
+        expected = """1. Ordered item
+   • Unordered subitem
+2. Another ordered item
+   1. Ordered subitem"""
+        self.assertEqual(self.converter.convert(markdown), expected)
 
     def test_convert_blockquote(self):
         self.assertEqual(self.converter.convert("> quote"), "> quote")
@@ -86,6 +112,17 @@ def hello_world():
 ```"""
         self.assertEqual(self.converter.convert(markdown), expected)
 
+    def test_code_block_with_language(self):
+        markdown = """```python
+def hello_world():
+    print("Hello, world!")
+```"""
+        expected = """```python
+def hello_world():
+    print("Hello, world!")
+```"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
     def test_code_block_with_cron(self):
         markdown = """```cron
 # comment
@@ -94,6 +131,27 @@ def hello_world():
         expected = """```cron
 # comment
 0 */12 * * * certbot renew --quiet
+```"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+        
+    def test_multiple_code_blocks_with_different_languages(self):
+        markdown = """```python
+print("Hello from Python")
+```
+
+Some text in between
+
+```javascript
+console.log("Hello from JavaScript");
+```"""
+        expected = """```python
+print("Hello from Python")
+```
+
+Some text in between
+
+```javascript
+console.log("Hello from JavaScript");
 ```"""
         self.assertEqual(self.converter.convert(markdown), expected)
 
