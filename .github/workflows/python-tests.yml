@@ -9,12 +9,12 @@ permissions:
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ develop ]
     paths:
       - 'markdown_to_mrkdwn/**'
       - 'tests/**'
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - 'markdown_to_mrkdwn/**'
       - 'tests/**'
