@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,10 +37,10 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           cp -r docs_src/_build/html/* docs/
-          if [[ -z $(git status --porcelain) ]]; then
-            echo "No changes to commit."
+          if [[ -z $(git status --porcelain docs/) ]]; then
+            echo "No changes to commit in docs/ directory."
           else
             git add docs/
-            git commit -m "Automated documentation build"
+            git commit -m "Automated documentation build [skip ci]"
             git push
           fi 
