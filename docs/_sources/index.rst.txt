@@ -15,7 +15,7 @@ Features
 - No external dependencies
 - Comprehensive support for Markdown elements:
 
-  - Headings (H1, H2, H3)
+  - Headings (H1, H2, H3, H4, H5, H6)
   - Text formatting (bold, italic, strikethrough)
   - Lists (ordered and unordered, with nesting)
   - Task lists (checked and unchecked items)
