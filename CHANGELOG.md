@@ -1,4 +1,8 @@
 # Changelog
+## [0.1.7] - 2025-04-12
+### Added
+- Added support for header (H4, H5, H6)
+
 ## [0.1.6] - 2025-04-02
 ### Added
 - Added support for ordered lists (numbered lists with proper indentation)
