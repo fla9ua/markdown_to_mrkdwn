@@ -8,6 +8,7 @@ permissions:
   pull-requests: write  # For commenting on PRs
 
 on:
+  workflow_dispatch:
   push:
     branches: [ develop ]
     paths:

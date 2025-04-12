@@ -16,7 +16,7 @@ A lightweight, efficient library for converting standard Markdown to Slack's mrk
 - Fast and lightweight conversion from Markdown to Slack's mrkdwn format
 - No external dependencies
 - Comprehensive support for Markdown elements:
-  - Headings (H1, H2, H3)
+  - Headings (H1, H2, H3, H4, H5, H6)
   - Text formatting (bold, italic, strikethrough)
   - Lists (ordered and unordered, with nesting)
   - Ordered lists (numbered lists with proper indentation)
@@ -79,6 +79,9 @@ print(mrkdwn_text)
 | `# Heading` | `*Heading*` |
 | `## Heading` | `*Heading*` |
 | `### Heading` | `*Heading*` |
+| `#### Heading` | `*Heading*` |
+| `##### Heading` | `*Heading*` |
+| `###### Heading` | `*Heading*` |
 | `**Bold**` | `*Bold*` |
 | `__Bold__` | `*Bold*` |
 | `*Italic*` | `_Italic_` |
