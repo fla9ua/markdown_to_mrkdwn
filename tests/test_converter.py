@@ -10,6 +10,9 @@ class TestSlackMarkdownConverter(unittest.TestCase):
         self.assertEqual(self.converter.convert("# Header 1"), "*Header 1*")
         self.assertEqual(self.converter.convert("## Header 2"), "*Header 2*")
         self.assertEqual(self.converter.convert("### Header 3"), "*Header 3*")
+        self.assertEqual(self.converter.convert("#### Header 4"), "*Header 4*")
+        self.assertEqual(self.converter.convert("##### Header 5"), "*Header 5*")
+        self.assertEqual(self.converter.convert("###### Header 6"), "*Header 6*")
 
     def test_convert_bold(self):
         self.assertEqual(self.converter.convert("**bold text**"), "*bold text*")

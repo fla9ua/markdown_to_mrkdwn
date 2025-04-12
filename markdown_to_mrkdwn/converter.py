@@ -30,6 +30,10 @@ class SlackMarkdownConverter:
             (re.compile(r"^(\s*)(\d+)\. (.+)", re.MULTILINE), r"\1\2. \3"),  # Ordered list
             (re.compile(r"!\[.*?\]\((.+?)\)", re.MULTILINE), r"<\1>"),  # Images to URL
             (re.compile(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", re.MULTILINE), r"_\1_"),  # Italic
+            # Headings must be ordered from H6 to H1 for correct matching
+            (re.compile(r"^###### (.+)$", re.MULTILINE), r"*\1*"), # H6 as bold
+            (re.compile(r"^##### (.+)$", re.MULTILINE), r"*\1*"), # H5 as bold
+            (re.compile(r"^#### (.+)$", re.MULTILINE), r"*\1*"), # H4 as bold
             (re.compile(r"^### (.+)$", re.MULTILINE), r"*\1*"),  # H3 as bold
             (re.compile(r"^## (.+)$", re.MULTILINE), r"*\1*"),  # H2 as bold
             (re.compile(r"^# (.+)$", re.MULTILINE), r"*\1*"),  # H1 as bold
