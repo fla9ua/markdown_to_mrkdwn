@@ -40,13 +40,17 @@ jobs:
         run: |
           pytest tests/ --cov=markdown_to_mrkdwn --cov-report=xml --cov-report=term
 
-  build-docs:
+  deploy-pages:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,41 +66,12 @@ jobs:
         run: |
           cd docs_src
           make html
-      - name: Copy docs
-        run: |
-          cp -r docs_src/_build/html docs
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: built-docs
-          path: docs
-
-  deploy-pages:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: build-docs
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: built-docs
-          path: docs
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/html
+          path: docs_src/_build/html
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
