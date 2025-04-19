@@ -162,3 +162,51 @@ License
 -------
 
 This project is licensed under the MIT License - see the `LICENSE <LICENSE>`_ file for details.
+
+Plugin System
+============
+
+You can extend the converter with your own plugins.
+
+Function Plugin Example::
+
+    from markdown_to_mrkdwn.converter import SlackMarkdownConverter
+    
+    def to_upper(line):
+        return line.upper()
+    
+    converter = SlackMarkdownConverter()
+    converter.register_plugin(
+        name="to_upper",
+        converter_func=to_upper,
+        priority=10,
+        scope="line",
+        timing="after"
+    )
+    print(converter.convert("hello"))  # Output: HELLO
+
+Regex Plugin Example::
+
+    # Add comma to thousands
+    converter.register_regex_plugin(
+        name="add_comma_to_thousands",
+        pattern=r"(?<=\\d)(?=(\\d{3})+(?!\\d))",
+        replacement=",",
+        priority=10,
+        timing="after"
+    )
+    print(converter.convert("1234567"))  # Output: 1,234,567
+
+    # Mask email addresses
+    converter.register_regex_plugin(
+        name="mask_email",
+        pattern=r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+        replacement="[EMAIL]",
+        priority=20,
+        timing="after"
+    )
+    print(converter.convert("Contact: test.user@example.com"))  # Output: Contact: [EMAIL]
+
+- priority controls execution order (lower runs first)
+- timing can be "before" or "after" (default: "after")
+- scope is always "line" for regex plugins
