@@ -10,12 +10,12 @@ permissions:
 on:
   workflow_dispatch:
   push:
-    branches: [ develop ]
+    branches: [ main, develop ]
     paths:
       - 'markdown_to_mrkdwn/**'
       - 'tests/**'
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
     paths:
       - 'markdown_to_mrkdwn/**'
       - 'tests/**'
