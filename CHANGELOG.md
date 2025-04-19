@@ -1,5 +1,5 @@
 # Changelog
-## [0.2.0] - 2024-06-09
+## [0.2.0] - 2025-04-19
 ### Added
 - Plugin system: `register_plugin`, `register_regex_plugin` for user-defined conversions
 - Support for regex-based line plugins (with priority and timing)
