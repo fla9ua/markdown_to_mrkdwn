@@ -54,7 +54,7 @@ class SlackMarkdownConverter:
         self.triple_end = "%%BOLDITALIC_END%%"
 
     def register_plugin(self, name: str, converter_func: Callable[[str], str], 
-                       priority: int = 50, scope: str = "line") -> None:
+                       priority: int = 50, scope: str = "line", timing: str = "after") -> None:
         """
         Register a custom conversion plugin.
         
@@ -63,16 +63,19 @@ class SlackMarkdownConverter:
             converter_func (callable): A function that takes a text string and returns the converted text
             priority (int): Execution priority (lower numbers execute first)
             scope (str): Application scope - "global" (entire text), "line" (line by line), or "block" (block by block)
+            timing (str): When to apply the plugin for line scope - "before" or "after" (default: "after")
         """
         if scope not in ["global", "line", "block"]:
             raise ValueError("Plugin scope must be 'global', 'line', or 'block'")
-            
+        if scope == "line" and timing not in ["before", "after"]:
+            raise ValueError("Plugin timing must be 'before' or 'after' for line scope")
         self.plugins[name] = {
             "func": converter_func,
             "priority": priority,
-            "scope": scope
+            "scope": scope,
+            "timing": timing if scope == "line" else None
         }
-        # Update plugin execution order based on priority (lower numbers execute first)
+        # Update plugin execution order based on priority (lower numbers execute first, ascending order)
         self.plugin_order = sorted(
             self.plugins.keys(),
             key=lambda x: self.plugins[x]["priority"]
@@ -103,7 +106,8 @@ class SlackMarkdownConverter:
         """
         return {name: {
             "priority": info["priority"],
-            "scope": info["scope"]
+            "scope": info["scope"],
+            "timing": info.get("timing")
         } for name, info in self.plugins.items()}
 
     def convert(self, markdown: str) -> str:
@@ -134,6 +138,12 @@ class SlackMarkdownConverter:
             
             lines = markdown.split("\n")
             converted_lines = []
+
+            # Get line-scope plugins for before/after timing in ascending priority order
+            before_line_plugins = [name for name in self.plugin_order
+                                  if self.plugins[name]["scope"] == "line" and self.plugins[name].get("timing", "after") == "before"]
+            after_line_plugins = [name for name in self.plugin_order
+                                 if self.plugins[name]["scope"] == "line" and self.plugins[name].get("timing", "after") == "after"]
             
             for line in lines:
                 # Skip conversion for table placeholders
@@ -141,14 +151,17 @@ class SlackMarkdownConverter:
                     converted_lines.append(line)
                     continue
                 
-                # Apply line scope plugins
-                for plugin_name in self.plugin_order:
-                    plugin = self.plugins[plugin_name]
-                    if plugin["scope"] == "line":
-                        line = plugin["func"](line)
+                # Apply before line scope plugins
+                for plugin_name in before_line_plugins:
+                    line = self.plugins[plugin_name]["func"](line)
                 
                 # Apply standard line conversion
                 line = self._convert_line(line)
+                
+                # Apply after line scope plugins
+                for plugin_name in after_line_plugins:
+                    line = self.plugins[plugin_name]["func"](line)
+                
                 converted_lines.append(line)
                 
             result = "\n".join(converted_lines)
@@ -250,3 +263,18 @@ class SlackMarkdownConverter:
         )
 
         return line.rstrip()
+
+    def register_regex_plugin(self, name: str, pattern: str, replacement: str, priority: int = 50, timing: str = "after") -> None:
+        """
+        Register a line-scope plugin using only regex pattern and replacement.
+        Args:
+            name (str): Unique name for the plugin
+            pattern (str): Regex pattern to search for
+            replacement (str): Replacement string
+            priority (int): Execution priority (lower numbers execute first)
+            timing (str): When to apply the plugin - "before" or "after" (default: "after")
+        """
+        compiled = re.compile(pattern)
+        def regex_func(line: str) -> str:
+            return compiled.sub(replacement, line)
+        self.register_plugin(name, regex_func, priority=priority, scope="line", timing=timing)

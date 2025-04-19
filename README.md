@@ -115,59 +115,52 @@ converter = SlackMarkdownConverter()
 
 ### Plugin System
 
-The library supports a flexible plugin system that allows you to extend or customize the conversion process:
+You can extend the converter with your own plugins.
 
+### Function Plugin Example
 ```python
-from markdown_to_mrkdwn import SlackMarkdownConverter
+from markdown_to_mrkdwn.converter import SlackMarkdownConverter
 
-# Create a converter instance
+def to_upper(line):
+    return line.upper()
+
 converter = SlackMarkdownConverter()
-
-# Define a custom plugin function
-def emoji_converter(line):
-    """Convert emoji codes to actual emoji characters"""
-    emoji_map = {
-        ":smile:": "😊",
-        ":thumbsup:": "👍",
-        ":heart:": "❤️"
-    }
-    for code, emoji in emoji_map.items():
-        line = line.replace(code, emoji)
-    return line
-
-# Register the plugin
 converter.register_plugin(
-    name="emoji_converter",
-    converter_func=emoji_converter,
-    priority=10,  # Lower numbers execute first
-    scope="line"  # Process each line individually
+    name="to_upper",
+    converter_func=to_upper,
+    priority=10,
+    scope="line",
+    timing="after"
 )
-
-# Convert markdown with emoji codes
-markdown_text = "I :smile: this feature!"
-mrkdwn_text = converter.convert(markdown_text)
-# Result: "I 😊 this feature!"
+print(converter.convert("hello"))  # Output: HELLO
 ```
 
-#### Plugin Scopes
-
-Plugins can operate at three different scopes:
-
-- `global`: Process the entire text before any standard conversions
-- `line`: Process each line individually (after standard line conversions)
-- `block`: Process the entire text after all standard conversions
-
-#### Plugin Management
-
-You can manage plugins with these methods:
-
+### Regex Plugin Example
 ```python
-# Get a list of registered plugins
-plugins = converter.get_registered_plugins()
+# Add comma to thousands
+converter.register_regex_plugin(
+    name="add_comma_to_thousands",
+    pattern=r"(?<=\\d)(?=(\\d{3})+(?!\\d))",
+    replacement=",",
+    priority=10,
+    timing="after"
+)
+print(converter.convert("1234567"))  # Output: 1,234,567
 
-# Remove a plugin
-converter.remove_plugin("emoji_converter")
+# Mask email addresses
+converter.register_regex_plugin(
+    name="mask_email",
+    pattern=r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+    replacement="[EMAIL]",
+    priority=20,
+    timing="after"
+)
+print(converter.convert("Contact: test.user@example.com"))  # Output: Contact: [EMAIL]
 ```
+
+- `priority` controls execution order (lower runs first)
+- `timing` can be "before" or "after" (default: "after")
+- `scope` is always "line" for regex plugins
 
 ### Error Handling
 

@@ -1,4 +1,12 @@
 # Changelog
+## [0.2.0] - 2024-06-09
+### Added
+- Plugin system: `register_plugin`, `register_regex_plugin` for user-defined conversions
+- Support for regex-based line plugins (with priority and timing)
+- `timing` (before/after) to control plugin application order
+- Enhanced tests for plugin and regex features
+- Expanded documentation and usage examples in README.md, README.rst
+
 ## [0.1.7] - 2025-04-12
 ### Added
 - Added support for header (H4, H5, H6)

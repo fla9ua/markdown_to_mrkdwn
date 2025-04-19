@@ -1,6 +1,7 @@
+# exec command python3 -m unittest tests/test_converter.py
+
 import unittest
 from markdown_to_mrkdwn.converter import SlackMarkdownConverter
-import re
 
 
 class TestSlackMarkdownConverter(unittest.TestCase):
@@ -525,6 +526,129 @@ Left-aligned | Center-aligned | Right-aligned"""
         markdown = "- Item with ~strikethrough~, ***bold italic***, and a [`link`](http://ex.com)"
         expected = "• Item with ~strikethrough~, *_bold italic_*, and a <http://ex.com|`link`>"
         self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_plugin_timing_before_and_after(self):
+        """Test that timing='before' and timing='after' change the plugin application order"""
+        converter = SlackMarkdownConverter()
+
+        # Add marker before and after standard conversion
+        def add_marker_before(line):
+            return f"[B]{line}"
+        def add_marker_after(line):
+            return f"{line}[A]"
+
+        # 'before' is applied before standard conversion, 'after' is applied after
+        converter.register_plugin("before_marker", add_marker_before, priority=10, scope="line", timing="before")
+        converter.register_plugin("after_marker", add_marker_after, priority=10, scope="line", timing="after")
+
+        markdown = "**bold**"
+        # Expected: before -> standard conversion -> after
+        # [B]**bold** -> [B]*bold* -> [B]*bold*[A]
+        expected = "[B]*bold*[A]"
+        self.assertEqual(converter.convert(markdown), expected)
+
+        # Also check priority order for timing
+        converter = SlackMarkdownConverter()
+        def before1(line): return f"[1]{line}"
+        def before2(line): return f"[2]{line}"
+        def after1(line): return f"{line}[a]"
+        def after2(line): return f"{line}[b]"
+        converter.register_plugin("before2", before2, priority=20, scope="line", timing="before")
+        converter.register_plugin("before1", before1, priority=10, scope="line", timing="before")
+        converter.register_plugin("after2", after2, priority=20, scope="line", timing="after")
+        converter.register_plugin("after1", after1, priority=10, scope="line", timing="after")
+        markdown = "**bold**"
+        # before1 -> before2 -> standard conversion -> after1 -> after2
+        # [1][2]*bold*[a][b]
+        expected = "[1][2]*bold*[a][b]"
+        self.assertEqual(converter.convert(markdown), expected)
+
+    def test_register_regex_plugin(self):
+        """Test that register_regex_plugin works for regex-based line replacement."""
+        converter = SlackMarkdownConverter()
+        # Simple replacement
+        converter.register_regex_plugin(
+            name="replace_foo_with_bar",
+            pattern=r"foo",
+            replacement="bar",
+            priority=10,
+            timing="after"
+        )
+        self.assertEqual(converter.convert("foo test"), "bar test")
+        self.assertEqual(converter.convert("test foo foo"), "test bar bar")
+
+        # Priority and timing check
+        converter = SlackMarkdownConverter()
+        converter.register_regex_plugin(
+            name="replace_foo_with_bar",
+            pattern=r"foo",
+            replacement="bar",
+            priority=20,
+            timing="after"
+        )
+        converter.register_regex_plugin(
+            name="replace_bar_with_baz",
+            pattern=r"bar",
+            replacement="baz",
+            priority=10,
+            timing="after"
+        )
+        # bar→bazが先に適用される（priority=10）
+        self.assertEqual(converter.convert("foo"), "baz")
+
+        # Timing before: should apply before standard conversion
+        converter = SlackMarkdownConverter()
+        converter.register_regex_plugin(
+            name="add_marker_before",
+            pattern=r"foo",
+            replacement="[B]foo",
+            priority=10,
+            timing="before"
+        )
+        # Should add marker before standard conversion
+        self.assertEqual(converter.convert("foo"), "[B]foo")
+
+        # Complex regex: add comma to thousands
+        converter = SlackMarkdownConverter()
+        converter.register_regex_plugin(
+            name="add_comma_to_thousands",
+            pattern=r"(?<=\d)(?=(\d{3})+(?!\d))",
+            replacement=",",
+            priority=10,
+            timing="after"
+        )
+        self.assertEqual(converter.convert("1234567"), "1,234,567")
+        self.assertEqual(converter.convert("金額: 987654321円"), "金額: 987,654,321円")
+
+        # Complex regex: mask email addresses
+        converter = SlackMarkdownConverter()
+        converter.register_regex_plugin(
+            name="mask_email",
+            pattern=r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+",
+            replacement="[EMAIL]",
+            priority=10,
+            timing="after"
+        )
+        self.assertEqual(converter.convert("Contact: test.user@example.com"), "Contact: [EMAIL]")
+        self.assertEqual(converter.convert("a@example.com b@example.com"), "[EMAIL] [EMAIL]")
+
+        # Multiple regex plugins: swap words and mask
+        converter = SlackMarkdownConverter()
+        converter.register_regex_plugin(
+            name="swap_foo_bar",
+            pattern=r"foo",
+            replacement="bar",
+            priority=10,
+            timing="after"
+        )
+        converter.register_regex_plugin(
+            name="mask_bar",
+            pattern=r"bar",
+            replacement="***",
+            priority=20,
+            timing="after"
+        )
+        self.assertEqual(converter.convert("foo bar foo"), "*** *** ***")
 
 
 if __name__ == "__main__":
