@@ -24,8 +24,8 @@ class SlackMarkdownConverter:
         self.encoding = encoding
         self.in_code_block = False
         self.table_replacements = {}
-        self.plugins: Dict[str, Dict[str, Any]] = {}  # プラグインを格納する辞書
-        self.plugin_order: List[str] = []  # プラグインの実行順序
+        self.plugins: Dict[str, Dict[str, Any]] = {}  # Dictionary to store plugins
+        self.plugin_order: List[str] = []  # Plugin execution order
         # Use compiled regex patterns for better performance
         self.patterns: List[Tuple[re.Pattern, str]] = [
             (re.compile(r"^(\s*)- \[([ ])\] (.+)", re.MULTILINE), r"\1• ☐ \3"),  # Unchecked task list

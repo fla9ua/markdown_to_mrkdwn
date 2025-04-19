@@ -593,7 +593,7 @@ Left-aligned | Center-aligned | Right-aligned"""
             priority=10,
             timing="after"
         )
-        # bar→bazが先に適用される（priority=10）
+        # bar→baz is applied first (priority=10)
         self.assertEqual(converter.convert("foo"), "baz")
 
         # Timing before: should apply before standard conversion
