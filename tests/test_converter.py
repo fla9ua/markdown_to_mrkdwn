@@ -558,9 +558,9 @@ Left-aligned | Center-aligned | Right-aligned"""
         converter.register_plugin("after2", after2, priority=20, scope="line", timing="after")
         converter.register_plugin("after1", after1, priority=10, scope="line", timing="after")
         markdown = "**bold**"
-        # before1 -> before2 -> standard conversion -> after1 -> after2
-        # [1][2]*bold*[a][b]
-        expected = "[1][2]*bold*[a][b]"
+        # before1->before2->standard conversion->after1->after2
+        # [2][1]*bold*[a][b]
+        expected = "[2][1]*bold*[a][b]"
         self.assertEqual(converter.convert(markdown), expected)
 
     def test_register_regex_plugin(self):
@@ -583,17 +583,17 @@ Left-aligned | Center-aligned | Right-aligned"""
             name="replace_foo_with_bar",
             pattern=r"foo",
             replacement="bar",
-            priority=20,
+            priority=10,
             timing="after"
         )
         converter.register_regex_plugin(
             name="replace_bar_with_baz",
             pattern=r"bar",
             replacement="baz",
-            priority=10,
+            priority=20,
             timing="after"
         )
-        # bar→baz is applied first (priority=10)
+        # bar→baz is applied after foo→bar (priority=20)
         self.assertEqual(converter.convert("foo"), "baz")
 
         # Timing before: should apply before standard conversion
