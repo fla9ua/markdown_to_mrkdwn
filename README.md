@@ -16,13 +16,14 @@ A lightweight, efficient library for converting standard Markdown to Slack's mrk
 - Fast and lightweight conversion from Markdown to Slack's mrkdwn format
 - No external dependencies
 - Comprehensive support for Markdown elements:
-  - Headings (H1, H2, H3)
+  - Headings (H1, H2, H3, H4, H5, H6)
   - Text formatting (bold, italic, strikethrough)
   - Lists (ordered and unordered, with nesting)
+  - Ordered lists (numbered lists with proper indentation)
   - Task lists (checked and unchecked items)
   - Tables (with header formatting)
   - Links and image references
-  - Code blocks (with language specification)
+  - Code blocks (with language specification preserved)
   - Blockquotes
   - Horizontal rules
 - Preserves code blocks without converting their contents
@@ -78,6 +79,9 @@ print(mrkdwn_text)
 | `# Heading` | `*Heading*` |
 | `## Heading` | `*Heading*` |
 | `### Heading` | `*Heading*` |
+| `#### Heading` | `*Heading*` |
+| `##### Heading` | `*Heading*` |
+| `###### Heading` | `*Heading*` |
 | `**Bold**` | `*Bold*` |
 | `__Bold__` | `*Bold*` |
 | `*Italic*` | `_Italic_` |
@@ -85,10 +89,12 @@ print(mrkdwn_text)
 | `[Link](https://example.com)` | `<https://example.com\|Link>` |
 | `![Image](https://example.com/img.png)` | `<https://example.com/img.png>` |
 | `- List item` | `• List item` |
+| `1. Ordered item` | `1. Ordered item` |
 | `- [ ] Task` | `• ☐ Task` |
 | `- [x] Task` | `• ☑ Task` |
 | `> Quote` | `> Quote` |
 | `` `Code` `` | `` `Code` `` |
+| `` ```python `` | `` ```python `` |
 | `---` | `──────────` |
 | Tables | Simple text tables with bold headers |
 

@@ -1,13 +1,9 @@
 # Changelog
-## [0.1.7] - 2025-04-01
+## [0.1.7] - 2025-04-12
 ### Added
-- Added extensible plugin system
-  - Support for custom conversion plugins
-  - Three plugin scopes: global, line, and block
-  - Plugin priority system
-  - Plugin management methods
+- Added support for header (H4, H5, H6)
 
-## [0.1.6] - 2025-04-01
+## [0.1.6] - 2025-04-02
 ### Added
 - Added support for ordered lists (numbered lists with proper indentation)
 - Improved code block handling to preserve language specification
