@@ -650,6 +650,14 @@ Left-aligned | Center-aligned | Right-aligned"""
         )
         self.assertEqual(converter.convert("foo bar foo"), "*** *** ***")
 
+    def test_register_plugin_invalid_timing(self):
+        """scopeがlineのとき、timingに不正な値を指定するとValueErrorになることをテスト"""
+        converter = SlackMarkdownConverter()
+        def dummy_plugin(text):
+            return text
+        with self.assertRaises(ValueError):
+            converter.register_plugin("invalid_timing", dummy_plugin, scope="line", timing="invalid")
+
 
 if __name__ == "__main__":
     unittest.main()
