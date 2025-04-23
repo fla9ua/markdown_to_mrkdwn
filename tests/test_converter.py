@@ -1,5 +1,9 @@
 # exec command python3 -m unittest tests/test_converter.py
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import unittest
 from markdown_to_mrkdwn.converter import SlackMarkdownConverter
 
