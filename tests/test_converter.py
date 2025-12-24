@@ -658,6 +658,29 @@ Left-aligned | Center-aligned | Right-aligned"""
         with self.assertRaises(ValueError):
             converter.register_plugin("invalid_timing", dummy_plugin, scope="line", timing="invalid")
 
+    def test_convert_headers_with_trailing_whitespace(self):
+        self.assertEqual(self.converter.convert("# Header 1 "), "*Header 1*")
+        self.assertEqual(self.converter.convert("## Header 2   "), "*Header 2*")
+        self.assertEqual(self.converter.convert("### Header 3\t"), "*Header 3*")
+
+    def test_code_block_with_trailing_whitespace(self):
+        markdown = "```python \ndef hello():\n    pass\n```"
+        expected = "```python\ndef hello():\n    pass\n```"
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_line_endings(self):
+        markdown = "Line 1\r\nLine 2\rLine 3"
+        expected = "Line 1\nLine 2\nLine 3"
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_state_reset(self):
+        # Test that state is reset between convert calls
+        markdown1 = "```python\ncode"
+        self.converter.convert(markdown1)
+        
+        markdown2 = "# Header"
+        self.assertEqual(self.converter.convert(markdown2), "*Header*")
+
 
 if __name__ == "__main__":
     unittest.main()
