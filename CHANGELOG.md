@@ -1,4 +1,12 @@
 # Changelog
+## [0.3.0] - 2025-12-24
+### Fixed
+- Fixed parsing failures when converting Markdown text containing Windows-style line endings (\r\n)
+  - Code block detection: Updated regex to handle trailing whitespace including \r characters
+  - Header parsing: Updated header regexes to be more robust against trailing whitespace
+  - Changed line splitting from `split('\n')` to `splitlines()` to universally handle \n, \r, and \r\n
+  - Ensured `self.in_code_block` is reset at the beginning of conversion to prevent state leakage
+
 ## [0.2.0] - 2025-04-19
 ### Added
 - Plugin system: `register_plugin`, `register_regex_plugin` for user-defined conversions
