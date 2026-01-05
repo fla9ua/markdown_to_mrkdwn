@@ -685,6 +685,57 @@ Left-aligned | Center-aligned | Right-aligned"""
         markdown2 = "# Header"
         self.assertEqual(self.converter.convert(markdown2), "*Header*")
 
+    def test_table_inside_code_block(self):
+        """Test that tables inside code blocks are not converted (Issue #30)"""
+        markdown = """結果:
+```
+| col1 | col2 |
+|------|------|
+| a    | b    |
+```"""
+        expected = """結果:
+```
+| col1 | col2 |
+|------|------|
+| a    | b    |
+```"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_table_outside_code_block(self):
+        """Test that tables outside code blocks are still converted"""
+        markdown = """結果:
+| col1 | col2 |
+|------|------|
+| a    | b    |"""
+        expected = """結果:
+*col1* | *col2*
+a | b"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_table_and_code_block_mixed(self):
+        """Test that tables outside code blocks are converted, but inside are not"""
+        markdown = """Table outside:
+| Header 1 | Header 2 |
+|----------|----------|
+| Value 1  | Value 2  |
+
+Code block with table:
+```
+| col1 | col2 |
+|------|------|
+| a    | b    |
+```"""
+        expected = """Table outside:
+*Header 1* | *Header 2*
+Value 1 | Value 2
+Code block with table:
+```
+| col1 | col2 |
+|------|------|
+| a    | b    |
+```"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
