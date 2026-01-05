@@ -330,6 +330,13 @@ Left-aligned | Center-aligned | Right-aligned"""
         result = converter.convert("Line 1\nLine 2")
         self.assertEqual(result, "1: Line 1\n1: Line 2")
         
+        # Test that TABLE_PLACEHOLDER lines are preserved (not modified by plugin)
+        # This tests the else branch in add_line_numbers by directly calling the plugin function
+        placeholder = "%%TABLE_PLACEHOLDER_123456789%%"
+        plugin_func = converter.plugins["line_numbers"]["func"]
+        result_placeholder = plugin_func(placeholder)
+        self.assertEqual(result_placeholder, placeholder)
+        
     def test_plugin_scope_block(self):
         """Test a block scope plugin."""
         converter = SlackMarkdownConverter()
