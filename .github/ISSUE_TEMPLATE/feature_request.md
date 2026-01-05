@@ -7,20 +7,20 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
+**Describe the feature**
 A clear and concise description of what you want to happen.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
 **Usage example**
-If possible, provide an example of how the new feature would be used.
 ```python
-from markdown_to_mrkdwn import convert
+from markdown_to_mrkdwn import SlackMarkdownConverter
+
+converter = SlackMarkdownConverter()
 # Example of using the new feature
+markdown_input = """
+# Your markdown example here
+"""
+result = converter.convert(markdown_input)
+print(result)
 ```
 
 **Additional context**
