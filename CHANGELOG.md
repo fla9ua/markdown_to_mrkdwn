@@ -1,4 +1,11 @@
 # Changelog
+## [0.3.1] - 2026-01-03
+### Fixed
+- Fixed tables inside code blocks being incorrectly converted [#30](https://github.com/fla9ua/markdown_to_mrkdwn/issues/30)
+  - Tables inside code blocks are now preserved as-is without conversion
+  - Added code block detection in `_convert_tables` method to skip table conversion when inside code blocks
+  - Added test cases for tables inside code blocks
+
 ## [0.3.0] - 2025-12-24
 ### Fixed
 - Fixed parsing failures when converting Markdown text containing Windows-style line endings (\r\n)
