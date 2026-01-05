@@ -185,6 +185,7 @@ class SlackMarkdownConverter:
     def _convert_tables(self, markdown: str) -> str:
         """
         Convert Markdown tables to Slack's mrkdwn format.
+        Tables inside code blocks are preserved as-is.
 
         Args:
             markdown (str): The Markdown text containing tables.
@@ -198,6 +199,22 @@ class SlackMarkdownConverter:
 
         def convert_table(match):
             original_table = match.group(0)
+            match_start = match.start()
+            
+            # Check if this table is inside a code block
+            text_before = markdown[:match_start]
+            in_code_block = False
+            lines_before = text_before.split('\n')
+            for line in lines_before:
+                stripped = line.strip()
+                if stripped.startswith('```'):
+                    # Check if it's a code block delimiter (not inline code)
+                    if re.match(r'^```\s*$', stripped) or re.match(r'^```\w+\s*$', stripped):
+                        in_code_block = not in_code_block
+            
+            # If inside code block, return original table unchanged
+            if in_code_block:
+                return original_table
 
             table_lines = original_table.strip().split("\n")
             header_line = table_lines[0]
