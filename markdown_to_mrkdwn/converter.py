@@ -30,7 +30,7 @@ class SlackMarkdownConverter:
         self.patterns: List[Tuple[re.Pattern, str]] = [
             (re.compile(r"^(\s*)- \[([ ])\] (.+)", re.MULTILINE), r"\1• ☐ \3"),  # Unchecked task list
             (re.compile(r"^(\s*)- \[([xX])\] (.+)", re.MULTILINE), r"\1• ☑ \3"),  # Checked task list
-            (re.compile(r"^(\s*)[-,\*] (.+)", re.MULTILINE), r"\1• \2"),  # Unordered list
+            (re.compile(r"^(\s*)[-\*] (.+)", re.MULTILINE), r"\1• \2"),  # Unordered list
             (re.compile(r"^(\s*)(\d+)\. (.+)", re.MULTILINE), r"\1\2. \3"),  # Ordered list
             (re.compile(r"!\[.*?\]\((.+?)\)", re.MULTILINE), r"<\1>"),  # Images to URL
             (re.compile(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", re.MULTILINE), r"_\1_"),  # Italic
