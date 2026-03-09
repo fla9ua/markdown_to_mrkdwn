@@ -38,7 +38,7 @@ class TestSlackMarkdownConverter(unittest.TestCase):
 
     def test_convert_unordered_list(self):
         self.assertEqual(self.converter.convert("- item"), "• item")
-        self.assertEqual(self.converter.convert("* item"), "• item", msg="This is the list issue")
+        self.assertEqual(self.converter.convert("* item"), "• item")
 
         
     def test_convert_ordered_list(self):
