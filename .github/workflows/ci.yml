@@ -15,6 +15,7 @@ on:
       - "tests/**"
       - "docs_src/**"
       - ".github/workflows/**"
+  workflow_dispatch:
 
 jobs:
   test:
