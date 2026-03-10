@@ -1,4 +1,13 @@
 # Changelog
+
+
+
+## [0.3.2] - 2026-03-10
+### Added
+- Support for asterisk (*) in unordered lists alongside hyphen (-) [#36](https://github.com/fla9ua/markdown_to_mrkdwn/pull/36)
+  - Updated regex pattern to accept both `-` and `*` as unordered list markers
+  - Added test case for asterisk-based unordered lists
+
 ## [0.3.1] - 2026-01-03
 ### Fixed
 - Fixed tables inside code blocks being incorrectly converted [#30](https://github.com/fla9ua/markdown_to_mrkdwn/issues/30)

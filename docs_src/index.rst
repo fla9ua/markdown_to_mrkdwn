@@ -95,6 +95,8 @@ Supported Conversions
      - `<https://example.com/img.png>`
    * - `- List item`
      - `• List item`
+   * - `* List item`
+     - `• List item`
    * - `1. Ordered item`
      - `1. Ordered item`
    * - `- [ ] Task`

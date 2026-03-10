@@ -89,6 +89,7 @@ print(mrkdwn_text)
 | `[Link](https://example.com)` | `<https://example.com\|Link>` |
 | `![Image](https://example.com/img.png)` | `<https://example.com/img.png>` |
 | `- List item` | `• List item` |
+| `* List item` | `• List item` |
 | `1. Ordered item` | `1. Ordered item` |
 | `- [ ] Task` | `• ☐ Task` |
 | `- [x] Task` | `• ☑ Task` |
