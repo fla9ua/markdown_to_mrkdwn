@@ -2,6 +2,12 @@
 
 
 
+## [0.3.3] - 2026-05-27
+### Fixed
+- Fixed inline Markdown formatting inside table body cells not being converted [#37](https://github.com/fla9ua/markdown_to_mrkdwn/issues/37)
+  - Table cells now convert inline formatting such as bold text
+  - Added a regression test for bold text in table body cells
+
 ## [0.3.2] - 2026-03-10
 ### Added
 - Support for asterisk (*) in unordered lists alongside hyphen (-) [#36](https://github.com/fla9ua/markdown_to_mrkdwn/pull/36)
