@@ -220,6 +220,28 @@ Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3"""
         expected = """*Left* | *Center* | *Right*
 Left-aligned | Center-aligned | Right-aligned"""
         self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_convert_table_with_bold_body_cells(self):
+        markdown = """| Feature | Python | Go |
+|---|---|---|
+| **Typing** | Dynamic | Static |
+| **Performance** | Moderate | High |"""
+        expected = """*Feature* | *Python* | *Go*
+*Typing* | Dynamic | Static
+*Performance* | Moderate | High"""
+        self.assertEqual(self.converter.convert(markdown), expected)
+
+    def test_convert_table_with_inline_formatting_body_cells(self):
+        markdown = """| Syntax | Value |
+|---|---|
+| *italic* | [link](https://example.com) |
+| ~~strike~~ | `code` |
+| ![alt](https://example.com/image.png) | ***bold italic*** |"""
+        expected = """*Syntax* | *Value*
+_italic_ | <https://example.com|link>
+~strike~ | `code`
+<https://example.com/image.png> | *_bold italic_*"""
+        self.assertEqual(self.converter.convert(markdown), expected)
         
     def test_error_handling(self):
         """Test that the converter returns the original markdown when an exception occurs."""

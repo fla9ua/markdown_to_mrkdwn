@@ -49,6 +49,16 @@ class SlackMarkdownConverter:
             (re.compile(r"^(---|\*\*\*|___)$", re.MULTILINE), r"──────────"),  # Horizontal line
             (re.compile(r"~~(.+?)~~", re.MULTILINE), r"~\1~"),  # Strikethrough
         ]
+        self.inline_patterns: List[Tuple[re.Pattern, str]] = [
+            (re.compile(r"!\[.*?\]\((.+?)\)", re.MULTILINE), r"<\1>"),  # Images to URL
+            (re.compile(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", re.MULTILINE), r"_\1_"),  # Italic
+            (re.compile(r"(^|\s)~\*\*(.+?)\*\*(\s|$)", re.MULTILINE), r"\1 *\2* \3"),  # Bold with space handling
+            (re.compile(r"(?<!\*)\*\*(.+?)\*\*(?!\*)", re.MULTILINE), r"*\1*"),  # Bold
+            (re.compile(r"__(.+?)__", re.MULTILINE), r"*\1*"),  # Underline as bold
+            (re.compile(r"\[(.+?)\]\((.+?)\)", re.MULTILINE), r"<\2|\1>"),  # Links
+            (re.compile(r"`(.+?)`", re.MULTILINE), r"`\1`"),  # Inline code
+            (re.compile(r"~~(.+?)~~", re.MULTILINE), r"~\1~"),  # Strikethrough
+        ]
         # Placeholders for triple emphasis
         self.triple_start = "%%BOLDITALIC_START%%"
         self.triple_end = "%%BOLDITALIC_END%%"
@@ -225,7 +235,7 @@ class SlackMarkdownConverter:
 
             rows = []
             for line in data_lines:
-                cells = [cell.strip() for cell in line.strip("|").split("|")]
+                cells = [self._convert_table_cell(cell.strip()) for cell in line.strip("|").split("|")]
                 rows.append(cells)
 
             result = []
@@ -239,6 +249,31 @@ class SlackMarkdownConverter:
             return placeholder
 
         return table_pattern.sub(convert_table, markdown)
+
+    def _convert_table_cell(self, text: str) -> str:
+        """
+        Convert inline Markdown formatting supported inside table cells.
+
+        Tables are extracted before normal line conversion, so body cells need
+        their own inline formatting pass to match non-table text behavior.
+        """
+        text = re.sub(
+            r"(?<!\*)\*\*\*([^*\n]+?)\*\*\*(?!\*)",
+            lambda m: f"{self.triple_start}{m.group(1)}{self.triple_end}",
+            text,
+        )
+
+        for pattern, replacement in self.inline_patterns:
+            text = pattern.sub(replacement, text)
+
+        text = re.sub(
+            re.escape(self.triple_start) + r"(.*?)" + re.escape(self.triple_end),
+            r"*_\1_*",
+            text,
+            flags=re.MULTILINE,
+        )
+
+        return text
 
     def _convert_line(self, line: str) -> str:
         """
