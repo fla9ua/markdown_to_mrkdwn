@@ -829,6 +829,11 @@ Code block with table:
             "use `<div> & </div>` here",
         )
 
+    def test_escape_applies_to_table_body_cells(self):
+        converter = SlackMarkdownConverter(escape_special_chars=True)
+        markdown = "| a | b |\n|---|---|\n| x & y | <tag> |"
+        self.assertEqual(converter.convert(markdown), "*a* | *b*\nx &amp; y | &lt;tag&gt;")
+
 
 if __name__ == "__main__":
     unittest.main()
