@@ -766,6 +766,69 @@ Code block with table:
         result = self.converter._convert_line(placeholder)
         self.assertEqual(result, placeholder)
 
+    # --- Inline code content preservation (#item1) ---
+    def test_inline_code_content_not_converted(self):
+        """Markdown syntax inside inline code spans must be preserved literally."""
+        self.assertEqual(
+            self.converter.convert("`*italic*` and `**bold**`"),
+            "`*italic*` and `**bold**`",
+        )
+
+    def test_inline_code_preserves_link_and_strikethrough(self):
+        self.assertEqual(
+            self.converter.convert("text `[a](b)` and `~~x~~` here"),
+            "text `[a](b)` and `~~x~~` here",
+        )
+
+    def test_inline_code_outside_text_still_converted(self):
+        self.assertEqual(
+            self.converter.convert("**bold** with `*code*` then *italic*"),
+            "*bold* with `*code*` then _italic_",
+        )
+
+    # --- Tilde/triple-backtick fence support (#item3) ---
+    def test_tilde_fence_preserves_content(self):
+        markdown = "~~~\n**keep** and *me*\n~~~"
+        self.assertEqual(self.converter.convert(markdown), "~~~\n**keep** and *me*\n~~~")
+
+    def test_tilde_fence_with_language(self):
+        markdown = "~~~python\nprint('*x*')\n~~~"
+        self.assertEqual(self.converter.convert(markdown), "~~~python\nprint('*x*')\n~~~")
+
+    # --- Deterministic table placeholder (#item4) ---
+    def test_table_conversion_is_deterministic(self):
+        markdown = "| a | b |\n|---|---|\n| 1 | 2 |"
+        self.assertEqual(self.converter.convert(markdown), self.converter.convert(markdown))
+
+    # --- Special character escaping, opt-in (#item2) ---
+    def test_escape_disabled_by_default(self):
+        self.assertEqual(self.converter.convert("A & B < C > D"), "A & B < C > D")
+
+    def test_escape_enabled_escapes_special_chars(self):
+        converter = SlackMarkdownConverter(escape_special_chars=True)
+        self.assertEqual(converter.convert("A & B < C > D"), "A &amp; B &lt; C &gt; D")
+
+    def test_escape_preserves_blockquote_marker(self):
+        converter = SlackMarkdownConverter(escape_special_chars=True)
+        self.assertEqual(
+            converter.convert("> quote with <b> & stuff"),
+            "> quote with &lt;b&gt; &amp; stuff",
+        )
+
+    def test_escape_does_not_break_generated_links(self):
+        converter = SlackMarkdownConverter(escape_special_chars=True)
+        self.assertEqual(
+            converter.convert("see [x](http://a.com) <tag>"),
+            "see <http://a.com|x> &lt;tag&gt;",
+        )
+
+    def test_escape_skips_inline_code(self):
+        converter = SlackMarkdownConverter(escape_special_chars=True)
+        self.assertEqual(
+            converter.convert("use `<div> & </div>` here"),
+            "use `<div> & </div>` here",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
