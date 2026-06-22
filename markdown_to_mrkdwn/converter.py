@@ -14,14 +14,19 @@ class SlackMarkdownConverter:
         plugin_order (List[str]): A list of plugin names in execution order.
     """
 
-    def __init__(self, encoding="utf-8"):
+    def __init__(self, encoding="utf-8", escape_special_chars=False):
         """
         Initializes the SlackMarkdownConverter with a specified encoding.
 
         Args:
             encoding (str): The character encoding to use for the conversion. Default is 'utf-8'.
+            escape_special_chars (bool): When True, escape ``&``, ``<`` and ``>`` in plain
+                text to ``&amp;``, ``&lt;`` and ``&gt;`` as required by Slack's mrkdwn spec.
+                Disabled by default to preserve backward-compatible output. Escaping is not
+                applied inside code spans/blocks or to the blockquote marker and generated links.
         """
         self.encoding = encoding
+        self.escape_special_chars = escape_special_chars
         self.in_code_block = False
         self.table_replacements = {}
         self.plugins: Dict[str, Dict[str, Any]] = {}  # Dictionary to store plugins
@@ -40,7 +45,6 @@ class SlackMarkdownConverter:
             (re.compile(r"^### (.+?)\s*$", re.MULTILINE), r"*\1*"),  # H3 as bold
             (re.compile(r"^## (.+?)\s*$", re.MULTILINE), r"*\1*"),  # H2 as bold
             (re.compile(r"^# (.+?)\s*$", re.MULTILINE), r"*\1*"),  # H1 as bold
-            (re.compile(r"(^|\s)~\*\*(.+?)\*\*(\s|$)", re.MULTILINE), r"\1 *\2* \3"),  # Bold with space handling
             (re.compile(r"(?<!\*)\*\*(.+?)\*\*(?!\*)", re.MULTILINE), r"*\1*"),  # Bold
             (re.compile(r"__(.+?)__", re.MULTILINE), r"*\1*"),  # Underline as bold
             (re.compile(r"\[(.+?)\]\((.+?)\)", re.MULTILINE), r"<\2|\1>"),  # Links
@@ -52,13 +56,15 @@ class SlackMarkdownConverter:
         self.inline_patterns: List[Tuple[re.Pattern, str]] = [
             (re.compile(r"!\[.*?\]\((.+?)\)", re.MULTILINE), r"<\1>"),  # Images to URL
             (re.compile(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", re.MULTILINE), r"_\1_"),  # Italic
-            (re.compile(r"(^|\s)~\*\*(.+?)\*\*(\s|$)", re.MULTILINE), r"\1 *\2* \3"),  # Bold with space handling
             (re.compile(r"(?<!\*)\*\*(.+?)\*\*(?!\*)", re.MULTILINE), r"*\1*"),  # Bold
             (re.compile(r"__(.+?)__", re.MULTILINE), r"*\1*"),  # Underline as bold
             (re.compile(r"\[(.+?)\]\((.+?)\)", re.MULTILINE), r"<\2|\1>"),  # Links
             (re.compile(r"`(.+?)`", re.MULTILINE), r"`\1`"),  # Inline code
             (re.compile(r"~~(.+?)~~", re.MULTILINE), r"~\1~"),  # Strikethrough
         ]
+        # Inline code placeholder markers (content protected from inline conversion)
+        self.inline_code_start = "%%INLINECODE_"
+        self.inline_code_end = "%%"
         # Placeholders for triple emphasis
         self.triple_start = "%%BOLDITALIC_START%%"
         self.triple_end = "%%BOLDITALIC_END%%"
@@ -217,9 +223,9 @@ class SlackMarkdownConverter:
             lines_before = text_before.split('\n')
             for line in lines_before:
                 stripped = line.strip()
-                if stripped.startswith('```'):
+                if stripped.startswith('```') or stripped.startswith('~~~'):
                     # Check if it's a code block delimiter (not inline code)
-                    if re.match(r'^```\s*$', stripped) or re.match(r'^```\w+\s*$', stripped):
+                    if re.match(r'^(```|~~~)\s*$', stripped) or re.match(r'^(```|~~~)\w+\s*$', stripped):
                         in_code_block = not in_code_block
             
             # If inside code block, return original table unchanged
@@ -244,11 +250,48 @@ class SlackMarkdownConverter:
             for row in rows:
                 result.append(" | ".join(row))
 
-            placeholder = f"%%TABLE_PLACEHOLDER_{hash(original_table)}%%"
+            placeholder = f"%%TABLE_PLACEHOLDER_{len(self.table_replacements)}%%"
             self.table_replacements[placeholder] = "\n".join(result)
             return placeholder
 
         return table_pattern.sub(convert_table, markdown)
+
+    def _escape_text(self, text: str) -> str:
+        """
+        Escape Slack mrkdwn special characters (``&``, ``<``, ``>``) in plain text.
+
+        A leading blockquote marker (``>``) is preserved so blockquotes still render.
+        Ampersands are escaped first to avoid double-escaping the entities introduced
+        for ``<`` and ``>``.
+        """
+        text = text.replace("&", "&amp;")
+        text = text.replace("<", "&lt;")
+        if text.startswith(">"):
+            text = ">" + text[1:].replace(">", "&gt;")
+        else:
+            text = text.replace(">", "&gt;")
+        return text
+
+    def _protect_inline_code(self, text: str) -> Tuple[str, List[str]]:
+        """
+        Replace inline code spans with placeholders so their contents are not
+        converted by other inline rules. Returns the masked text and the captured
+        code spans (including the surrounding backticks) in order.
+        """
+        spans: List[str] = []
+
+        def replace(match):
+            spans.append(match.group(0))
+            return f"{self.inline_code_start}{len(spans) - 1}{self.inline_code_end}"
+
+        masked = re.sub(r"`[^`\n]+?`", replace, text)
+        return masked, spans
+
+    def _restore_inline_code(self, text: str, spans: List[str]) -> str:
+        """Restore inline code spans previously masked by ``_protect_inline_code``."""
+        for index, span in enumerate(spans):
+            text = text.replace(f"{self.inline_code_start}{index}{self.inline_code_end}", span)
+        return text
 
     def _convert_table_cell(self, text: str) -> str:
         """
@@ -257,11 +300,16 @@ class SlackMarkdownConverter:
         Tables are extracted before normal line conversion, so body cells need
         their own inline formatting pass to match non-table text behavior.
         """
+        text, code_spans = self._protect_inline_code(text)
+
         text = re.sub(
             r"(?<!\*)\*\*\*([^*\n]+?)\*\*\*(?!\*)",
             lambda m: f"{self.triple_start}{m.group(1)}{self.triple_end}",
             text,
         )
+
+        if self.escape_special_chars:
+            text = self._escape_text(text)
 
         for pattern, replacement in self.inline_patterns:
             text = pattern.sub(replacement, text)
@@ -272,6 +320,8 @@ class SlackMarkdownConverter:
             text,
             flags=re.MULTILINE,
         )
+
+        text = self._restore_inline_code(text, code_spans)
 
         return text
 
@@ -288,22 +338,28 @@ class SlackMarkdownConverter:
         if line.startswith("%%TABLE_PLACEHOLDER_") and line.endswith("%%"):
             return line
 
-        code_block_match = re.match(r"^```(\w*)\s*$", line)
+        code_block_match = re.match(r"^(```|~~~)(\w*)\s*$", line)
         if code_block_match:
-            language = code_block_match.group(1)
+            fence = code_block_match.group(1)
+            language = code_block_match.group(2)
             self.in_code_block = not self.in_code_block
             if self.in_code_block and language:
-                return f"```{language}"
-            return "```"
+                return f"{fence}{language}"
+            return fence
 
         if self.in_code_block:
             return line
+
+        line, code_spans = self._protect_inline_code(line)
 
         line = re.sub(
             r"(?<!\*)\*\*\*([^*\n]+?)\*\*\*(?!\*)",
             lambda m: f"{self.triple_start}{m.group(1)}{self.triple_end}",
             line,
         )
+
+        if self.escape_special_chars:
+            line = self._escape_text(line)
 
         for pattern, replacement in self.patterns:
             line = pattern.sub(replacement, line)
@@ -314,6 +370,8 @@ class SlackMarkdownConverter:
             line,
             flags=re.MULTILINE,
         )
+
+        line = self._restore_inline_code(line, code_spans)
 
         return line.rstrip()
 

@@ -9,7 +9,7 @@ URL = "https://github.com/fla9ua/markdown_to_mrkdwn"
 LICENSE = "MIT License"
 DOWNLOAD_URL = "https://github.com/fla9ua/markdown_to_mrkdwn"
 VERSION = markdown_to_mrkdwn.__version__
-PYTHON_REQUIRES = ">=3.6"
+PYTHON_REQUIRES = ">=3.8"
 
 INSTALL_REQUIRES = [
     # No dependencies required at the moment

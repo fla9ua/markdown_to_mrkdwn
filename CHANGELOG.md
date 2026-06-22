@@ -2,6 +2,17 @@
 
 
 
+## [0.3.4] - 2026-06-22
+### Fixed
+- Inline code spans (`` `...` ``) are now preserved literally; Markdown syntax inside them is no longer converted
+- `~~~` fenced code blocks (with or without a language) are now recognized and their contents preserved, matching ` ``` ` behavior
+- Table placeholders now use a deterministic sequential id instead of `hash()`, ensuring stable output across runs (independent of `PYTHONHASHSEED`)
+- Removed a stale bold-with-tilde regex that inserted stray spaces
+### Added
+- Optional `escape_special_chars` constructor flag (default `False`) to escape `&`, `<`, `>` to `&amp;`, `&lt;`, `&gt;` per Slack's mrkdwn spec; disabled by default to preserve backward-compatible output, and never applied inside code spans, the blockquote marker, or generated links
+### Changed
+- `setup.py` `python_requires` aligned with the documented minimum of Python 3.8
+
 ## [0.3.3] - 2026-05-27
 ### Fixed
 - Fixed inline Markdown formatting inside table body cells not being converted [#37](https://github.com/fla9ua/markdown_to_mrkdwn/issues/37)
